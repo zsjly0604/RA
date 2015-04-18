@@ -34,9 +34,9 @@ structure Main = struct
 (*         val _ = app (fn s => Printtree.printtree(out,s)) stms; *)
        val stms' = Canon.traceSchedule(Canon.basicBlocks stms)
        val instrs =  List.concat(map MipsGen.codegen stms') 
-        val (flowGraph, nodeList,llist) = MakeGraph.instrs2graph(instrs)
+       val (flowGraph, nodeList,llist) = MakeGraph.instrs2graph(instrs)
        val iGraph = Liveness.interferenceGraph (flowGraph, nodeList,llist)
-       val regAllocation = RegAlloc.alloc(instrs, iGraph, frame)
+       (*val regAllocation = RegAlloc.alloc(instrs, iGraph, frame)*)
       in  
          Liveness.show(TextIO.stdOut, iGraph)
      end

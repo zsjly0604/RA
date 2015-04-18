@@ -34,6 +34,12 @@ structure Assem = struct
 	  | LABEL{assem,...} => assem
 	  | MOVE{assem,dst,src} => speak(assem,[dst],[src],nil)
      end
-  fun compare (inst1,inst2) = String.compare("hello","world")
+  fun compare (inst1,inst2) =
+      let
+	  val inString1 = format(Temp.makestring) inst1
+	  val inString2 = format(Temp.makestring) inst2
+      in
+	  String.compare(inString1,inString2)
+      end
 end
 

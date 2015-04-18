@@ -36,12 +36,12 @@ structure MakeGraph: MAKEGRAPH =
     structure AG = Flow.AMap
      
     val llist = ref [] : Temp.temp list ref
-    val lIDmap : Temp.temp LG.map ref = ref LG.empty
-    val aIDmap : Temp.temp AG.map ref = ref AG.empty
 
     exception NoSuchNode of Temp.temp
     fun instrs2graph ilist =
 	let
+	    val lIDmap : Temp.temp LG.map ref = ref LG.empty
+	    val aIDmap : Temp.temp AG.map ref = ref AG.empty
 	    fun prodNode (insn,g) =
 		case insn of
 		    A.OPER{assem=assem, dst=dst, src=src, jump=jump} =>
@@ -51,6 +51,8 @@ structure MakeGraph: MAKEGRAPH =
 		    in
 			llist := ((!llist)@[ID]);
 			aIDmap := AG.insert(!aIDmap,insn,ID);
+			(*print "here";
+			print ("ID is " ^ Int.toString(valOf(AG.find(!aIDmap,insn))));*)
 			G.addNode(g, ID, node)
 		        
 		    end
@@ -61,14 +63,13 @@ structure MakeGraph: MAKEGRAPH =
 		    in
 			llist := ((!llist)@[ID]);
 			aIDmap := AG.insert(!aIDmap,insn,ID:Temp.temp);
-			lIDmap:= LG.insert(!lIDmap,lab,ID:Temp.temp);
+			lIDmap := LG.insert(!lIDmap,lab,ID:Temp.temp);
 			G.addNode(g, ID, node)
 		    end
 		  | A.MOVE{assem=assem,dst=dst,src=src} =>
 		    let
 			val mID = T.newtemp()
 			val node = (assem, [dst], [src], true)
-		   
 		    in
 			llist := ((!llist)@[mID]);
 			aIDmap := AG.insert(!aIDmap,insn,mID:Temp.temp);
@@ -78,41 +79,69 @@ structure MakeGraph: MAKEGRAPH =
 			
 	    fun prodEdges (instr,g) =
 		let
-		    val ID = valOf(AG.find(!aIDmap,instr))
 		    
-		   
-		    fun prodEdge (j,g) = G.addEdge(g,{from = ID,to = j})
+		    val ID = valOf(AG.find(!aIDmap,instr))
+		    val _ = print ("ID:" ^ Int.toString(ID)^"\n")
+		    fun prodEdge (j,g) =
+			if (ID = j) then g else
+			(G.addEdge(g,{from = ID,to = j}))
 		    fun getNext (ID:Temp.temp, labellist:Temp.temp list) =
-			case labellist of
-			    a::ID::next::rest => next
-			  | a::ID::[] => ID
-			  | _ => raise NoSuchNode(ID)
+			let
+			    fun helper (ans,list) =
+				case list of
+				   first::next::rest => if (ID = first) then helper(next,next::rest) else helper(ans, next::rest)
+				 | _ =>(ans,[])
+			    val (ans,_) = helper (ID,!llist)
+			in
+			    ans
+			end
 		in
 		    case instr of
-			A.OPER{assem=assem, dst=dst, src=src, jump = SOME(jlist)} =>
+			A.OPER{assem=assem, dst=dst, src=src, jump = jump} =>
 			let
-			    val tolist = map (fn label => valOf(LG.find(!lIDmap, label))) jlist
+			    val jlist = case jump of
+					    SOME(j) => j
+					  | NONE => []
+			    val jlength = List.length(jlist)
+			    val _= print ("assem:"^ assem ^"jlist:" ^ Int.toString(jlength)^"\n")
+			    val isBranch' = ((dst=[]) andalso (src=[]))
+			    val isBranch = isBranch' andalso (jlength=1)
+			    val tolist' = map (fn label => valOf(LG.find(!lIDmap, label))) jlist
+			    val nextInsn = getNext(ID,!llist)
+			    val _ = print ("nextInsn:" ^ Int.toString(nextInsn))
+			    val tolist = if isBranch then tolist'
+					 else (if (nextInsn = ID) then tolist' else (nextInsn::tolist'))
+			    val length = List.length(tolist)
 			in
+			    print ("tolist:" ^ Int.toString(length)^"\n");
 			    (foldl prodEdge g tolist)
 			end
 		      | A.LABEL{assem, lab} =>
 			let val to = getNext(ID, !llist)
 			    val from = ID
 			in
-			    G.addEdge(g, {from = from,to=to})
+			    if (from = to) then g else
+			    G.addEdge(g, {from = from,to = to})
 			end
 		      | A.MOVE{assem, dst, src} => 
 			let val to = getNext(ID,!llist)
 			    val from = ID
 			in
+			    if (from = to) then g else
 			    G.addEdge(g, {from = from,to = to})
 			end
 		end
 	    val g_empty: Flow.flowgraph = G.empty
+	    val _ = print "before adding base\n"
 	    val g_base = foldl prodNode G.empty ilist
+	    val _ = print "before adding edge\n"
 	    val fg = foldl prodEdges g_base ilist
-	    val nodes = map (fn l => G.getNode(fg, l)) (!llist)
+	    val _ = print "after adding edge\n"
+	    val nodes = map (fn l => (G.getNode(fg, l))) (!llist)
+	    val _ = print "after getting nodes"
 	in
+	    G.printGraph (fn (nid,(assem:string,def:Temp.temp list,use:Temp.temp list,isMove:bool)) => ("nid:"^Temp.makestring(nid)^"assem:"^assem)) fg;
+	    print"after print";
 	    (fg,nodes,!llist)
 	end
     end
