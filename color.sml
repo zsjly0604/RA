@@ -1,8 +1,8 @@
 structure Color : COLOR =  struct
 
 structure Frame = MipsFrame
-type allocation = Frame.register Temp.Map.map
-structure IGraph = FuncGraph(Temp.TempOrd)
+type allocation = Frame.register Temp.Table.table
+structure IGraph = Liveness.IGraph
 structure MS = IGraph.EdgeSet
 structure NM = IGraph.NodeMap
 structure NS = IGraph.NodeSet
@@ -14,7 +14,7 @@ structure RM = SplayMapFn(struct type ord_key = Frame.register
    
 val Impossible = ErrorMsg.impossible
 
-fun color {interference = Liveness.IGRAPH{graph, moves}, initial = initAlloc, registers} =
+fun color {interference = Liveness.IGRAPH{graph = graph, moves = moves}, initialAlloc, registers} =
   let val movelist : MS.set NM.map ref = ref NM.empty
       
       val worklistMoves = ref MS.empty 
@@ -38,8 +38,7 @@ fun color {interference = Liveness.IGRAPH{graph, moves}, initial = initAlloc, re
       val coloredNodes = ref NS.empty
 
       val initial = ref NS.empty
-
-      val colored : allocation ref = ref Temp.Map.empty
+      val colored = ref initialAlloc
 
       val nodes = IGraph.nodes(graph)
       val K = List.length(registers)
@@ -53,7 +52,7 @@ fun color {interference = Liveness.IGRAPH{graph, moves}, initial = initAlloc, re
         | SOME d => d
 
       fun getColor n = 
-        case Temp.Map.find(!colored, n) of
+        case Temp.Table.look(!colored, n) of
           NONE => Impossible "Can't find color"
         | SOME c => c
 
@@ -159,9 +158,8 @@ fun color {interference = Liveness.IGRAPH{graph, moves}, initial = initAlloc, re
        let fun treatNode n =
              let val nid = IGraph.getNodeID n
              in 
-               (case NM.find(initAlloc, nid) of
+               (case Temp.Table.look(initialAlloc, nid) of
                   SOME reg => (precolored := NS.add(!precolored, nid);
-                               colored := Temp.Map.insert(!colored, nid, reg);
                                case RM.find(!colorUsed, reg) of
                                   NONE => colorUsed := RM.insert(!colorUsed, reg, 1)
 				| SOME x => colorUsed := RM.insert(!colorUsed, reg, x + 1))
@@ -263,7 +261,7 @@ fun color {interference = Liveness.IGRAPH{graph, moves}, initial = initAlloc, re
                   fun selectColor () = 
                     let val selected = List.foldl (fn (a, b) => if valOf(RM.find(!colorUsed, a)) < valOf(RM.find(!colorUsed, b)) then a else b) (List.hd(!okColors)) (!okColors)                     val x = valOf(RM.find(!colorUsed, selected))
                   in
-                    colored := Temp.Map.insert(!colored, n, selected);
+                    colored := Temp.Table.enter(!colored, n, selected);
                     colorUsed := RM.insert(!colorUsed, selected, x + 1)
                   end
              in
@@ -277,7 +275,7 @@ fun color {interference = Liveness.IGRAPH{graph, moves}, initial = initAlloc, re
                 let val an = getAlias(n)
                     val c = getColor(an)
                 in
-                  colored := Temp.Map.insert(!colored, n, c)
+                  colored := Temp.Table.enter(!colored, n, c)
                 end 
        in
          if Stack.isEmpty(!selectStack) = false then (assigniter();assignColors())

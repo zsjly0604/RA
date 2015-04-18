@@ -1,14 +1,6 @@
-structure IGraph = FuncGraph(Temp.TempOrd)
-structure F = Flow
-structure FG = Flow.Graph
-structure A = Assem
-structure G = FuncGraph(Temp.TempOrd)
-structure T = Temp
-structure S = Symbol
-
 signature LIVENESS =
 sig
-
+    structure IGraph : FUNCGRAPH
     datatype igraph =
 	     IGRAPH of {graph: Temp.temp IGraph.graph,
 		        moves: (IGraph.nodeID * IGraph.nodeID) list}
@@ -20,13 +12,23 @@ sig
     val show: TextIO.outstream * igraph -> unit
 end
 
-structure Liveness :> LIVENESS =
+structure Liveness : LIVENESS =
 struct
-structure ioT = SplayMapFn(Temp.TempOrd)
-val inTable : Temp.Set.set ioT.map = ioT.empty
-val outTable : Temp.Set.set ioT.map = ioT.empty
+  structure IGraph = FuncGraph(Temp.TempOrd)
+  structure F = Flow
+  structure FG = Flow.Graph
+  structure A = Assem
+  structure G = FuncGraph(Temp.TempOrd)
+  structure T = Temp
+  structure S = Symbol
+  
+  structure ioT = SplayMapFn(Temp.TempOrd)
+
+  val inTable : Temp.Set.set ioT.map = ioT.empty
+  val outTable : Temp.Set.set ioT.map = ioT.empty
  datatype igraph = IGRAPH of {graph: Temp.temp IGraph.graph,
                                moves: (IGraph.nodeID * IGraph.nodeID) list}
+  
   fun inoutAnalysis (flowgraph,llist) =
       let
           val inSet = Temp.Set.empty
