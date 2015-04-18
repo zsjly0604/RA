@@ -1,7 +1,7 @@
 structure Color : COLOR =  struct
 
 structure Frame = MipsFrame
-type allocation = Frame.register Temp.Table.table
+type allocation = Frame.register Temp.Map.map
 structure IGraph = Liveness.IGraph
 structure MS = IGraph.EdgeSet
 structure NM = IGraph.NodeMap
@@ -52,7 +52,7 @@ fun color {interference = Liveness.IGRAPH{graph = graph, moves = moves}, initial
         | SOME d => d
 
       fun getColor n = 
-        case Temp.Table.look(!colored, n) of
+        case Temp.Map.find(!colored, n) of
           NONE => Impossible "Can't find color"
         | SOME c => c
 
@@ -158,7 +158,7 @@ fun color {interference = Liveness.IGRAPH{graph = graph, moves = moves}, initial
        let fun treatNode n =
              let val nid = IGraph.getNodeID n
              in 
-               (case Temp.Table.look(initialAlloc, nid) of
+               (case Temp.Map.find(initialAlloc, nid) of
                   SOME reg => (print ((Temp.makestring nid) ^ "precolored\n");
                                precolored := NS.add(!precolored, nid);
                                case RM.find(!colorUsed, reg) of
@@ -265,7 +265,7 @@ fun color {interference = Liveness.IGRAPH{graph = graph, moves = moves}, initial
                   fun selectColor () = 
                     let val selected = List.foldl (fn (a, b) => if valOf(RM.find(!colorUsed, a)) < valOf(RM.find(!colorUsed, b)) then a else b) (List.hd(!okColors)) (!okColors)                     val x = valOf(RM.find(!colorUsed, selected))
                   in
-                    colored := Temp.Table.enter(!colored, n, selected);
+                    colored := Temp.Map.insert(!colored, n, selected);
                     colorUsed := RM.insert(!colorUsed, selected, x + 1)
                   end
              in
@@ -280,7 +280,7 @@ fun color {interference = Liveness.IGRAPH{graph = graph, moves = moves}, initial
                 let val an = getAlias(n)
                     val c = getColor(an)
                 in
-                  colored := Temp.Table.enter(!colored, n, c)
+                  colored := Temp.Map.insert(!colored, n, c)
                 end 
        in
          if Stack.isEmpty(!selectStack) = false then (print "assign\n";assigniter();assignColors())

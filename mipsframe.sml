@@ -11,7 +11,7 @@ struct
 		| STRING of Temp.label * string
 
   datatype register = Reg of string
-  
+  structure TempMap = Temp.Map
 
   val FP = Temp.newtemp() 
   val RV = Temp.newtemp()
@@ -46,8 +46,8 @@ struct
   val s6 = Temp.newtemp()   
   val s7 = Temp.newtemp()   
 
-  val tempMap = foldr (fn ((temp, regEntry), table) => Temp.enter(table, temp, regEntry))
-            Temp.empty
+  val tempMap = foldr (fn ((temp, regEntry), table) => TempMap.insert(table, temp, regEntry))
+            TempMap.empty
             [(FP, Reg "$fp"),
              (RV, Reg "$v0"),
              (RA, Reg "$ra"),
@@ -85,7 +85,7 @@ struct
   val callersaves = [t0,t1,t2,t3,t4,t5,t6,t7,t8,t9] 
   
   fun lookreg temp =
-      case Temp.Table.look(tempMap,temp) of
+      case TempMap.find(tempMap,temp) of
 	  NONE => Reg "NonExistReg"
 	| SOME(Reg register) => Reg register
   

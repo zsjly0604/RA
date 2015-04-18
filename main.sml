@@ -36,9 +36,12 @@ structure Main = struct
        val instrs =  List.concat(map MipsGen.codegen stms') 
        val (flowGraph, nodeList,llist) = MakeGraph.instrs2graph(instrs)
        val iGraph = Liveness.interferenceGraph (flowGraph, nodeList,llist)
-       val regAllocation = RegAlloc.alloc(instrs, iGraph, frame)
+       val (instrs2, regAllocation) = RegAlloc.alloc(instrs, iGraph, frame)
+       val regalloclist = Temp.Map.listItemsi(regAllocation)
       in  
-         Liveness.show(TextIO.stdOut, iGraph)
+         Liveness.show(TextIO.stdOut, iGraph);
+         print("============regalloc map==========\n");
+         List.app (fn (k, F.Reg r) => print(Temp.makestring k ^ "->" ^ r ^ "\n")) regalloclist
      end
     | emitprocIGraph (F.STRING(lab,s)) = ()
 

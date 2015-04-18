@@ -6,7 +6,7 @@ sig type frame
                    | STRING of Temp.label * string
     datatype register = Reg of string
     (*datatype regs = Regs of Temp.temp * register*)
-    val tempMap: register Temp.Table.table
+    val tempMap: register Temp.Map.map
     val FP : Temp.temp
     val SP : Temp.temp
     val RV : Temp.temp
