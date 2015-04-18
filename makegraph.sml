@@ -39,7 +39,7 @@ structure MakeGraph: MAKEGRAPH =
 
     exception NoSuchNode of Temp.temp
     fun instrs2graph ilist =
-	let
+	let val _ = llist := []
 	    val lIDmap : Temp.temp LG.map ref = ref LG.empty
 	    val aIDmap : Temp.temp AG.map ref = ref AG.empty
 	    fun prodNode (insn,g) =

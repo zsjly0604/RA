@@ -89,7 +89,7 @@ struct
 	  NONE => Reg "NonExistReg"
 	| SOME(Reg register) => Reg register
   
-   val registers = map lookreg (argregs @ calleesaves @ callersaves @ specialregs)				    
+  val registers = map lookreg (argregs @ calleesaves @ callersaves @ specialregs)				    
 		  
 
   fun name (f:frame) = #name f

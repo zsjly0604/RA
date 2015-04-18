@@ -259,8 +259,7 @@ fun color {interference = Liveness.IGRAPH{graph = graph, moves = moves}, initial
                  fun filterColor (w) =
                        let val aw = getAlias(w)
                        in
-                         print ((Temp.makestring w) ^ (Temp.makestring aw) ^ "\n");
-                          if (NS.member(!precolored, aw) orelse NS.member(!coloredNodes, aw)) then okColors := deleteItem(!okColors, getColor(aw)) else ()
+                         if (NS.member(!precolored, aw) orelse NS.member(!coloredNodes, aw)) then okColors := deleteItem(!okColors, getColor(aw)) else ()
                   end 
                   fun selectColor () = 
                     let val selected = List.foldl (fn (a, b) => if valOf(RM.find(!colorUsed, a)) < valOf(RM.find(!colorUsed, b)) then a else b) (List.hd(!okColors)) (!okColors)                     val x = valOf(RM.find(!colorUsed, selected))
@@ -269,7 +268,6 @@ fun color {interference = Liveness.IGRAPH{graph = graph, moves = moves}, initial
                     colorUsed := RM.insert(!colorUsed, selected, x + 1)
                   end
              in
-               print ("assigniter " ^ (Temp.makestring n) ^ "\n");
                selectStack := Stack.pop(!selectStack);
                List.app filterColor adjlist;
                (if !okColors = [] then spilledNodes := n::(!spilledNodes)
@@ -283,8 +281,8 @@ fun color {interference = Liveness.IGRAPH{graph = graph, moves = moves}, initial
                   colored := Temp.Map.insert(!colored, n, c)
                 end 
        in
-         if Stack.isEmpty(!selectStack) = false then (print "assign\n";assigniter();assignColors())
-         else (print "colorcoalesced\n";List.app colorCoalesced (!coalescedNodes))
+         if Stack.isEmpty(!selectStack) = false then (assigniter();assignColors())
+         else (List.app colorCoalesced (!coalescedNodes))
   end
       
     fun repeat () =
@@ -298,7 +296,6 @@ fun color {interference = Liveness.IGRAPH{graph = graph, moves = moves}, initial
      build();
      makeWorklist();
      repeat();
-     print "finish repeat\n";
      assignColors();
      (!colored, !spilledNodes)
   end

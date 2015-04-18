@@ -10,8 +10,11 @@ struct
                 if is_def then MipsGen.codegen (Tree.MOVE(ae, Tree.TEMP t)) else MipsGen.codegen(Tree.MOVE(Tree.TEMP t, ae))
 
               fun alloc_du (is_def, dus, t) =
-                if List.exists (fn x => x = t) dus then (gen_instrs(is_def, Temp.newtemp()), map (fn x => if x = t then Temp.newtemp() else x) dus)
-                else ([], dus)
+                let val newt = Temp.newtemp()
+                in                
+                  if List.exists (fn x => x = t) dus then (gen_instrs(is_def, newt), map (fn x => if x = t then newt else x) dus)
+                  else ([], dus)
+                end
 
               fun trans_instr instr =
                 case instr of
@@ -33,15 +36,16 @@ struct
       in
         List.foldl (fn (t,ins) => rewrite1(ins,t)) instrs spilledNodes
     end
- 
+
   fun alloc (instrs, iGraph, frame)  =
-    let fun tempname (alloc, temp) =
-          case Temp.Table.look(alloc, temp) of
-            SOME(r) => r
-	   | NONE => Frame.lookreg temp        
-         val (colored, spilledNodes) = Color.color{interference = iGraph, initialAlloc = Frame.tempMap, registers = Frame.registers}
-     in
-        if spilledNodes = [] then (instrs, colored)
+    let val (colored, spilledNodes) = Color.color{interference = iGraph, initialAlloc = Frame.tempMap, registers = Frame.registers}
+        fun is_redundant instr =
+          case instr of
+              Assem.MOVE{assem,dst,src} =>
+              valOf(Temp.Map.find(colored,dst)) = valOf(Temp.Map.find(colored,src))
+            | _ => false 
+    in
+        if spilledNodes = [] then (List.filter (fn i => not (is_redundant i)) instrs,colored)
         else alloc(rewrite(instrs, frame, spilledNodes), iGraph, frame)
      end
 end
