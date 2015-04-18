@@ -1,0 +1,32 @@
+signature STACK =
+  sig
+    type 'a stack
+
+    val empty : 'a stack
+    val isEmpty : 'a stack -> bool
+
+    val push : ('a stack * 'a) -> 'a stack
+    val pop : 'a stack -> 'a stack
+    val top : 'a stack -> 'a
+  end
+
+structure Stack :> STACK =
+  struct
+    val Impossible = ErrorMsg.impossible
+
+    val empty = []
+    fun isEmpty (l) = 
+      case l of 
+        [] => true
+       | _ => false
+    
+    fun push (l, x) = x::l
+    fun pop (l) = 
+      case l of
+        [] => Impossible "Empty stack"
+       | (x::xs) => xs
+    fun top (l) =
+      case l of
+        [] => Impossible "Empty stack"
+       | (x::xs) => x
+   end    

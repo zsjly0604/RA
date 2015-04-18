@@ -1,0 +1,6 @@
+structure Liveness =
+struct
+  datatype igraph =
+     IGRAPH of {graph: Temp.temp FuncGraph.graph,
+                moves : (Temp.temp * Temp.temp) list}
+end
