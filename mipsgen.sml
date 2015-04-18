@@ -6,7 +6,7 @@ struct
 
 fun codegen (stm:T.stm) : A.instr list = 
   let val ilist = ref (nil:A.instr list)
-      val calldefs = [Frame.RV, Frame.RA]@(map #1 Frame.argregs)
+      val calldefs = [Frame.RV, Frame.RA]@ Frame.argregs
       fun emit x = ilist := x :: !ilist
       fun tostring i = if i >= 0 then Int.toString(i)
                        else ("-" ^ Int.toString(~i))
@@ -75,7 +75,7 @@ fun codegen (stm:T.stm) : A.instr list =
 	| munchStm (T.CJUMP(T.NE, e1, e2, l1, l2)) = emit(A.OPER{assem = "bne `s0, `s1, `j0\nb `j1\n",
                                                                  src = [munchExp e1, munchExp e2], dst = [], jump = SOME([l1, l2])})           
 	| munchStm (T.EXP(T.CALL(T.NAME(lab), args))) = 
-            let val pairs = map (fn r => (Temp.newtemp(), r)) (map #1 Frame.callersaves)
+            let val pairs = map (fn r => (Temp.newtemp(), r)) Frame.callersaves
                 val srcs = map #1 pairs
             in
               emit(A.OPER{assem = "jal " ^ Symbol.name(lab) ^ "\n",
@@ -137,7 +137,7 @@ fun codegen (stm:T.stm) : A.instr list =
                                                              src = [], dst = [r], jump = NONE})) 
   
 	| munchExp (T.CALL(T.NAME(lab), args)) = 
-            let val pairs = map (fn r => (Temp.newtemp(), r)) (map #1 Frame.callersaves)
+            let val pairs = map (fn r => (Temp.newtemp(), r)) Frame.callersaves
                 val srcs = map #1 pairs
                 fun fetch (a, r) = T.MOVE(T.TEMP r, T.TEMP a)
                 fun store (a, r) = T.MOVE(T.TEMP a, T.TEMP r)
@@ -153,7 +153,7 @@ fun codegen (stm:T.stm) : A.instr list =
         let val len = List.length(Frame.argregs) 
         in
           if i < len then
-            let val dst = List.nth((map #1 Frame.argregs), i)
+            let val dst = List.nth(Frame.argregs, i)
                 val src = munchExp(exp)
             in
               munchStm(T.MOVE(T.TEMP dst, T.TEMP src));

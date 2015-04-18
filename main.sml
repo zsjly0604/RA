@@ -26,15 +26,6 @@ structure Main = struct
 	    handle e => (TextIO.closeOut out; raise e)
        end 
 
-   fun compile filename = 
-       let val absyn = Parse.parse filename
-           val frags = (FindEscape.findEscape absyn; 
-                        Semant.transProg absyn)
-        in 
-            withOpenFile (filename ^ ".s") 
-	    (fn out => (app (emitproc out) frags))
-       end
-
     fun emitprocIGraph (F.PROC{body,frame}) =
      let 
           (*val _ = print ("emit " ^ Symbol.name (F.name frame) ^ "\n")*)
@@ -43,13 +34,11 @@ structure Main = struct
 (*         val _ = app (fn s => Printtree.printtree(out,s)) stms; *)
        val stms' = Canon.traceSchedule(Canon.basicBlocks stms)
        val instrs =  List.concat(map MipsGen.codegen stms') 
-
-         val (flowGraph, nodeList,llist) = MakeGraph.instrs2graph(instrs)
-         val iGraph = Liveness.interferenceGraph (flowGraph, nodeList,llist)
+        val (flowGraph, nodeList,llist) = MakeGraph.instrs2graph(instrs)
+       val iGraph = Liveness.interferenceGraph (flowGraph, nodeList,llist)
+       val regAllocation = RegAlloc.alloc(instrs, iGraph, frame)
       in  
-
-         (*(print("\n hahahah--->" ^ Int.toString(List.length nodeList))*)
-         Liveness.show(TextIO.stdOut, iGraph)
+         Liveness.show(TextIO.stdOut, iGraph);
      end
     | emitprocIGraph (F.STRING(lab,s)) = ()
 
@@ -59,6 +48,17 @@ structure Main = struct
         in 
             print "here"; map emitprocIGraph frags
         end
+
+     fun compile filename = 
+       let val absyn = Parse.parse filename
+           val frags = (FindEscape.findEscape absyn; 
+                        Semant.transProg absyn)
+        in 
+            (*withOpenFile (filename ^ ".s") 
+	    (fn out => (app (emitproc out) frags))*)
+           app emitprocIGraph frags
+       end
+
 end
 
 

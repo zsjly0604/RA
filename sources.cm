@@ -34,6 +34,8 @@ funcgraph.sml
 graph.sig
 graph.sml
 stack.sml
+regalloc.sig
+regalloc.sml
 makegraph.sml
 color.sig
 color.sml
