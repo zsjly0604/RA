@@ -7,9 +7,7 @@ struct
     let fun tempname (alloc, temp) =
           case Temp.Table.look(alloc, temp) of
             SOME(r) => r
-	   | NONE => Frame.lookreg temp
-        
-         
+	   | NONE => Frame.lookreg temp        
          val (colored, spilledNodes) = Color.color{interference = iGraph, initialAlloc = Frame.tempMap, registers = Frame.registers}
      in
         (instrs, colored)

@@ -43,7 +43,7 @@ fun color {interference = Liveness.IGRAPH{graph = graph, moves = moves}, initial
       val nodes = IGraph.nodes(graph)
       val K = List.length(registers)
 
-      fun deleteItem ([], _) = Impossible "Delete item from empty list"
+      fun deleteItem ([], _) = []
         | deleteItem (l, item) = List.filter (fn x => x <> item) l 
 
       fun getDegree n = 
@@ -159,11 +159,13 @@ fun color {interference = Liveness.IGRAPH{graph = graph, moves = moves}, initial
              let val nid = IGraph.getNodeID n
              in 
                (case Temp.Table.look(initialAlloc, nid) of
-                  SOME reg => (precolored := NS.add(!precolored, nid);
+                  SOME reg => (print ((Temp.makestring nid) ^ "precolored\n");
+                               precolored := NS.add(!precolored, nid);
                                case RM.find(!colorUsed, reg) of
                                   NONE => colorUsed := RM.insert(!colorUsed, reg, 1)
 				| SOME x => colorUsed := RM.insert(!colorUsed, reg, x + 1))
-	        | NONE => initial := NS.add(!initial, nid)); 
+	        | NONE => (print ((Temp.makestring nid) ^ "initial\n");
+                           initial := NS.add(!initial, nid))); 
                movelist := NM.insert(!movelist, nid, MS.empty);
                degree := NM.insert(!degree, nid, IGraph.degree n)        
              end
@@ -204,7 +206,8 @@ fun color {interference = Liveness.IGRAPH{graph = graph, moves = moves}, initial
        let val adjn = adjacent n
        in
           simplifyWorklist := nl;
-          Stack.push(!selectStack, n);
+          selectStack := Stack.push(!selectStack, n);
+          print ("push " ^ (Temp.makestring n) ^ "\n");
           app decrementDegree adjn
        end
 
@@ -254,9 +257,10 @@ fun color {interference = Liveness.IGRAPH{graph = graph, moves = moves}, initial
                  val okColors = ref registers
                  val adjlist = IGraph.adj(IGraph.getNode(graph, n))
                  fun filterColor (w) =
-                       let val aw = getAlias(w) 
+                       let val aw = getAlias(w)
                        in
-                         if (NS.member(!precolored, aw) orelse NS.member(!coloredNodes, aw)) then okColors := deleteItem(!okColors, getColor(aw)) else ()
+                         print ((Temp.makestring w) ^ (Temp.makestring aw) ^ "\n");
+                          if (NS.member(!precolored, aw) orelse NS.member(!coloredNodes, aw)) then okColors := deleteItem(!okColors, getColor(aw)) else ()
                   end 
                   fun selectColor () = 
                     let val selected = List.foldl (fn (a, b) => if valOf(RM.find(!colorUsed, a)) < valOf(RM.find(!colorUsed, b)) then a else b) (List.hd(!okColors)) (!okColors)                     val x = valOf(RM.find(!colorUsed, selected))
@@ -265,6 +269,7 @@ fun color {interference = Liveness.IGRAPH{graph = graph, moves = moves}, initial
                     colorUsed := RM.insert(!colorUsed, selected, x + 1)
                   end
              in
+               print ("assigniter " ^ (Temp.makestring n) ^ "\n");
                selectStack := Stack.pop(!selectStack);
                List.app filterColor adjlist;
                (if !okColors = [] then spilledNodes := n::(!spilledNodes)
@@ -278,8 +283,8 @@ fun color {interference = Liveness.IGRAPH{graph = graph, moves = moves}, initial
                   colored := Temp.Table.enter(!colored, n, c)
                 end 
        in
-         if Stack.isEmpty(!selectStack) = false then (assigniter();assignColors())
-         else List.app colorCoalesced (!coalescedNodes)
+         if Stack.isEmpty(!selectStack) = false then (print "assign\n";assigniter();assignColors())
+         else (print "colorcoalesced\n";List.app colorCoalesced (!coalescedNodes))
   end
       
     fun repeat () =
@@ -293,6 +298,7 @@ fun color {interference = Liveness.IGRAPH{graph = graph, moves = moves}, initial
      build();
      makeWorklist();
      repeat();
+     print "finish repeat\n";
      assignColors();
      (!colored, !spilledNodes)
   end
