@@ -38,7 +38,7 @@ structure Main = struct
        val iGraph = Liveness.interferenceGraph (flowGraph, nodeList,llist)
        val regAllocation = RegAlloc.alloc(instrs, iGraph, frame)
       in  
-         Liveness.show(TextIO.stdOut, iGraph);
+         Liveness.show(TextIO.stdOut, iGraph)
      end
     | emitprocIGraph (F.STRING(lab,s)) = ()
 
