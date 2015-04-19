@@ -2,7 +2,7 @@ main:
 	ws	$fp	0($sp)
 	move	$fp	$sp
 	addiu	$sp	$sp	-40
-L111:
+L108:
 	li $t2, 8
 	sw $t2, -12($fp)
 	addi $t1, $fp, -16
@@ -33,39 +33,39 @@ L111:
 	sw $v0, 0($a2)
 	lw $a0, 6($fp)
 	li $a1, 0
-	jal L80
+	jal L77
 	li $v0, 0
-	b L110
-L110:
+	b L107
+L107:
 	tmove	$sp	$fp
 	lw	$fp	0($sp)
 	jr	$ra
 
-L80:
+L77:
 	ws	$fp	0($sp)
 	move	$fp	$sp
 	addiu	$sp	$sp	-16
-L113:
+L110:
 	lw $t1, 6($fp)
 	lw $a0, 0($t1)
-	jal L81
+	jal L78
 	lw $t2, -4($fp)
 	lw $t4, 0($fp)
 	lw $t3, -12($t4)
-	beq $t2, $t3, L107
-b L108
-L108:
+	beq $t2, $t3, L104
+b L105
+L105:
 	li $t0, 0
 	lw $t7, 0($fp)
 	lw $t6, -12($t7)
 	addi $t5, $t6, -1
-	ble $t0, $t5, L106
-b L93
-L93:
+	ble $t0, $t5, L103
+b L90
+L90:
 	li $v0, 0
-L107:
-	b L112
-L106:
+L104:
+	b L109
+L103:
 	li $a2, 1
 	lw $a1, 0($fp)
 	lw $a0, -28($a1)
@@ -76,11 +76,11 @@ L106:
 	mul $a2, $a3, $s0
 	add $t9, $a0, $a2
 	lw $t8, 0($t9)
-	beqz $t8, L102
-b L103
-L103:
+	beqz $t8, L99
+b L100
+L100:
 	li $a2, 0
-L102:
+L99:
 	li $a3, 1
 	lw $s7, 0($fp)
 	lw $s6, -24($s7)
@@ -90,41 +90,41 @@ L102:
 	mul $t0, $t1, $t2
 	add $s5, $s6, $t0
 	lw $s4, 0($s5)
-	beqz $s4, L97
-b L98
-L98:
+	beqz $s4, L94
+b L95
+L95:
 	li $a3, 0
-L97:
+L94:
 	lw $t7, 0($fp)
 	lw $t6, -16($t7)
 	li $t9, 4
 	mul $t8, $t9, $t0
 	add $t5, $t6, $t8
 	lw $t4, 0($t5)
-	beqz $t4, L94
-b L95
-L95:
+	beqz $t4, L91
+b L92
+L92:
 	li $a3, 0
-L94:
+L91:
 	li $v0, 1
-	beq $a3, $v0, L99
-b L100
-L100:
+	beq $a3, $v0, L96
+b L97
+L97:
 	li $a2, 0
-L99:
+L96:
 	li $ra, 1
-	beq $a2, $ra, L104
-b L105
-L105:
+	beq $a2, $ra, L101
+b L102
+L102:
 	addi $t0, $t0, 1
 	lw $v1, 0($fp)
 	lw $0, -12($v1)
 	addi $sp, $0, -1
-	blt $t0, $sp, L106
-b L114
-L114:
-	b L93
-L104:
+	blt $t0, $sp, L103
+b L111
+L111:
+	b L90
+L101:
 	li $fp, 1
 	lw $a2, 0($fp)
 	lw $a1, -16($a2)
@@ -161,7 +161,7 @@ L104:
 	move $a0, $fp
 	lw $a1, -4($fp)
 	addi $a1, $a1, 1
-	jal L80
+	jal L77
 	li $a2, 0
 	lw $s2, 0($fp)
 	lw $s0, -16($s2)
@@ -188,69 +188,69 @@ L104:
 	mul $t9, $fp, $v0
 	add $t6, $t7, $t9
 	sw $t5, 0($t6)
-	b L105
-L112:
+	b L102
+L109:
 	tmove	$sp	$fp
 	lw	$fp	0($sp)
 	jr	$ra
 
-L81:
+L78:
 	ws	$fp	0($sp)
 	move	$fp	$sp
 	addiu	$sp	$sp	-16
-L116:
+L113:
 	li $a2, 0
 	lw $t1, 0($fp)
 	lw $t0, -12($t1)
 	addi $a3, $t0, -1
-	ble $a2, $a3, L91
-b L82
-L82:
-	la $a0, L92
+	ble $a2, $a3, L88
+b L79
+L79:
+	la $a0, L89
 	jal print
 	li $v0, 0
-	b L115
-L91:
+	b L112
+L88:
 	li $a1, 0
 	lw $t4, 0($fp)
 	lw $t3, -12($t4)
 	addi $t2, $t3, -1
-	ble $a1, $t2, L89
-b L83
-L83:
-	la $a0, L90
+	ble $a1, $t2, L86
+b L80
+L80:
+	la $a0, L87
 	jal print
 	addi $a2, $a2, 1
 	lw $t7, 0($fp)
 	lw $t6, -12($t7)
 	addi $t5, $t6, -1
-	blt $a2, $t5, L91
-b L117
-L117:
-	b L82
-L89:
-	la $a0, L84
+	blt $a2, $t5, L88
+b L114
+L114:
+	b L79
+L86:
+	la $a0, L81
 	lw $a1, 0($fp)
 	lw $a0, -20($a1)
 	li $a3, 4
 	mul $a2, $a3, $a2
 	add $t9, $a0, $a2
 	lw $t8, 0($t9)
-	beq $t8, $a1, L86
-b L87
-L87:
-	la $a0, L85
-L86:
+	beq $t8, $a1, L83
+b L84
+L84:
+	la $a0, L82
+L83:
 	jal print
 	addi $a1, $a1, 1
 	lw $s3, 0($fp)
 	lw $s2, -12($s3)
 	addi $s0, $s2, -1
-	blt $a1, $s0, L89
-b L118
-L118:
-	b L83
+	blt $a1, $s0, L86
+b L115
 L115:
+	b L80
+L112:
 	tmove	$sp	$fp
 	lw	$fp	0($sp)
 	jr	$ra
