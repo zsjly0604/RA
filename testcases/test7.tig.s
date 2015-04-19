@@ -1,47 +1,47 @@
 main:
-	ws	$fp	0($sp)
+	sw	$fp	0($sp)
 	move	$fp	$sp
-	addiu	$sp	$sp	-40
-L158:
-	lw $a0, 6($fp)
+	addiu	$sp	$sp	-44
+L101:
+	lw $a3, 7($fp)
 	li $a1, 0
-	la $a2, L156
-	jal L153
-	b L157
-L157:
+	la $a2, L99
+	jal L96
+	b L100
+L100:
 	tmove	$sp	$fp
 	lw	$fp	0($sp)
 	jr	$ra
 
-L152:
-	ws	$fp	0($sp)
+L95:
+	sw	$fp	0($sp)
 	move	$fp	$sp
 	addiu	$sp	$sp	-16
-L160:
-	lw $a3, 6($fp)
-	lw $a0, 0($a3)
+L103:
+	lw $t0, 7($fp)
+	lw $a3, 0($t0)
 	lw $a1, -4($fp)
-	la $a2, L154
-	jal L153
-	la $v0, L155
-	b L159
-L159:
+	la $a2, L97
+	jal L96
+	la $v0, L98
+	b L102
+L102:
 	tmove	$sp	$fp
 	lw	$fp	0($sp)
 	jr	$ra
 
-L153:
-	ws	$fp	0($sp)
+L96:
+	sw	$fp	0($sp)
 	move	$fp	$sp
 	addiu	$sp	$sp	-16
-L162:
-	lw $a3, 6($fp)
+L105:
+	lw $a3, 7($fp)
 	lw $a0, 0($a3)
 	addi $a1, $a2, 1
-	jal L152
+	jal L95
 	li $v0, 0
-	b L161
-L161:
+	b L104
+L104:
 	tmove	$sp	$fp
 	lw	$fp	0($sp)
 	jr	$ra

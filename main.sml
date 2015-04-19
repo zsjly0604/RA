@@ -37,7 +37,8 @@ fun addtab instrs =
          val instrs'' = addtab body
          val format0 = A.format(tempname alloc)
          val regalloclist = Temp.Map.listItemsi(alloc)
-      in  
+
+   in
          TextIO.output(out, prolog);
           app (fn i => TextIO.output(out, format0 i)) instrs'';
          TextIO.output(out, epilog)
@@ -47,7 +48,7 @@ fun addtab instrs =
    fun withOpenFile fname f = 
        let val out = TextIO.openOut fname
         in (f out before TextIO.closeOut out) 
-	    handle e => (TextIO.closeOut out; raise e)
+	   handle e => (TextIO.closeOut out; raise e)
        end 
 
      fun compile filename = 
@@ -57,8 +58,34 @@ fun addtab instrs =
         in 
             withOpenFile (filename ^ ".s") 
 	    (fn out => (app (emitproc out) frags))
-         end
+       end
 
+   fun emitprocIGraph (Frame.PROC{body,frame}) =
+     let 
+          (*val _ = print ("emit " ^ Symbol.name (F.name frame) ^ "\n")*)
+(*         val _ = Printtree.printtree(out,body); *)
+       val stms = Canon.linearize body
+(*         val _ = app (fn s => Printtree.printtree(out,s)) stms; *)
+       val stms' = Canon.traceSchedule(Canon.basicBlocks stms)
+       val instrs =  List.concat(map MipsGen.codegen stms') 
+
+       val (flowGraph, nodeList,llist) = MakeGraph.instrs2graph(instrs)
+       val _ = print ("before print")
+       val iGraph = Liveness.interferenceGraph (flowGraph, nodeList,llist)
+      in  
+
+         (*(print("\n hahahah--->" ^ Int.toString(List.length nodeList))*)
+         Liveness.show(TextIO.stdOut, iGraph)
+     end
+	| emitprocIGraph (Frame.STRING(lab,s)) = ()
+						 
+  fun printIGraph filename = 
+       let
+	   val absyn = Parse.parse filename
+           val frags = (FindEscape.findEscape absyn; Semant.transProg absyn)
+       in
+           map emitprocIGraph frags
+       end
 end
 
 

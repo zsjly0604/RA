@@ -1,35 +1,35 @@
 main:
-	ws	$fp	0($sp)
+	sw	$fp	0($sp)
 	move	$fp	$sp
-	addiu	$sp	$sp	-16
-L28:
+	addiu	$sp	$sp	-52
+L180:
 	li $v0, 0
-	b L27
-L27:
+	b L179
+L179:
 	tmove	$sp	$fp
 	lw	$fp	0($sp)
 	jr	$ra
 
-L26:
-	ws	$fp	0($sp)
+L178:
+	sw	$fp	0($sp)
 	move	$fp	$sp
 	addiu	$sp	$sp	-16
-L30:
+L182:
 	lw $v0, -4($fp)
-	b L29
-L29:
+	b L181
+L181:
 	tmove	$sp	$fp
 	lw	$fp	0($sp)
 	jr	$ra
 
-L25:
-	ws	$fp	0($sp)
+L177:
+	sw	$fp	0($sp)
 	move	$fp	$sp
 	addiu	$sp	$sp	-16
-L32:
+L184:
 	lw $v0, -4($fp)
-	b L31
-L31:
+	b L183
+L183:
 	tmove	$sp	$fp
 	lw	$fp	0($sp)
 	jr	$ra

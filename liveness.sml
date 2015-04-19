@@ -46,7 +46,7 @@ val outTable : Temp.Set.set ioT.map = ioT.empty
 	  (*val _ = print "after init"*)
 	  fun update (label,(flowgraph,inTable,outTable,tinTable,toutTable)) =
 	      let
-		  val _ = print ("update"^Int.toString(label)^"\n")
+		  (*val _ = print ("update"^Int.toString(label)^"\n")*)
 		  val (_,(_,def:Temp.temp list,use:Temp.temp list,_),s,p) = FG.getNode(flowgraph,label)
 		  val defSet = Temp.Set.empty
 		  val useSet = Temp.Set.empty
@@ -59,8 +59,8 @@ val outTable : Temp.Set.set ioT.map = ioT.empty
 					   let
 					       val result = valOf(ioT.find(inTable,label))
 					   in
-					       print "successor set:";
-					       printSet result;
+					       (*print "successor set:";
+					       printSet result;*)
 					       result
 					   end
 				       ) succlist
@@ -73,11 +73,11 @@ val outTable : Temp.Set.set ioT.map = ioT.empty
 		  val _ = print "tinSet:"
 		  val _ = printSet tinSet
 		  val _ = print "toutSet:"
-		  val _ = printSet toutSet*)
+		  val _ = printSet toutSet
 		  val _ = print "inSet:"
 		  val _ = printSet inSet
 		  val _ = print "outSet:"
-		  val _ = printSet outSet
+		  val _ = printSet outSet*)
 	      in
 		  (flowgraph, ioT.insert(inTable, label, inSet),
 		   ioT.insert(outTable, label, outSet),
@@ -90,7 +90,7 @@ val outTable : Temp.Set.set ioT.map = ioT.empty
 	  val isConverge: bool ref = ref false
 	  fun converge (inTable,outTable,tin,tout) =
 	      let
-		  val _ = print "converge"
+		  (*val _ = print "converge"*)
 	          val (flowg,fin,fout,ftin,ftout) = foldr update (flowgraph, inTable, outTable,tin,tout) llist
 		  val _ = (flag:= true)
 		  fun decide (label,(ftin,ftout,fin,fout)) =
@@ -117,7 +117,7 @@ val outTable : Temp.Set.set ioT.map = ioT.empty
 		      end
 	          val _ = foldl decide (ftin, ftout, fin, fout) llist
 	          val _ = (isConverge := (!flag))
-		  val _ = print ("isConverge:" ^ Bool.toString(!isConverge))
+		  (*val _ = print ("isConverge:" ^ Bool.toString(!isConverge))*)
 	      in
 		  if (!isConverge) then (fin,fout,ftin,ftout)
 		  else converge (fin,fout,ftin,ftout)
@@ -128,8 +128,34 @@ val outTable : Temp.Set.set ioT.map = ioT.empty
 	      
   fun prodIGraph (outTable: Temp.Set.set ioT.map,flowgraph:(string * Temp.temp list * Temp.temp list * bool) FG.graph,llist:Temp.temp list) =
       let
-	val igraph:Temp.temp IGraph.graph = IGraph.empty
-	val movelist = ref [] 
+	val igraph_base:Temp.temp IGraph.graph = IGraph.empty
+	val movelist = ref []
+	fun outer (label,igraph) =
+	    let
+		val (_,(_,defs,uses,isMove),s,p) = FG.getNode(flowgraph,label)
+		val emptydef = (defs = [])
+		fun procOneInsn def =
+		    let
+			val louts = valOf(ioT.find(outTable,label))
+		        val liveouts = Temp.Set.listItems(louts)
+			fun addtwoNodes (liveout,(igraph,def)) =
+			    let
+				val tempigraph1 = IGraph.addNode(igraph,def,0)
+				val tempigraph2 = IGraph.addNode(tempigraph1,liveout,0)
+			    in
+				(tempigraph2,def)
+			    end
+			val (initigraph1,_) = foldr addtwoNodes (igraph,def) liveouts
+		    in
+			initigraph1
+		    end
+	    in
+		if emptydef then igraph else procOneInsn (List.hd(defs))
+	    end
+
+        fun initIGraph (igraph,llist) = foldl outer igraph llist
+		    
+		
 	fun oneBlock (label,igraph) =
 	    let
 		(*val _ = print"before"*)
@@ -140,17 +166,17 @@ val outTable : Temp.Set.set ioT.map = ioT.empty
 		    let
 			(*val _ = print "before outTable"*)
 			val louts = valOf(ioT.find(outTable, label))
-			val _ = print "nonMove outSet:"
-		        val _ = printSet louts
+			(*val _ = print "nonMove outSet:"
+		        val _ = printSet louts*)
 			(*val _ = print"outTable?"*)
 			val liveouts = Temp.Set.listItems(louts)	
 			fun oneEdge (liveout,(igraph,def)) =
 			    let
-				val _ = print "inNonMove"
-				val tempigraph1 = IGraph.addNode(igraph,def,0)
-				val tempigraph2 = IGraph.addNode(tempigraph1,liveout,0)
+				(*val _ = print "inNonMove"*)
+				(*val tempigraph1 = IGraph.addNode(igraph,def,0)
+				val tempigraph2 = IGraph.addNode(tempigraph1,liveout,0)*)
 			    in
-				(IGraph.doubleEdge(tempigraph2:Temp.temp IGraph.graph,def:IGraph.nodeID,liveout:IGraph.nodeID),def)
+				(IGraph.doubleEdge(igraph:Temp.temp IGraph.graph,def:IGraph.nodeID,liveout:IGraph.nodeID),def)
 			    end
 			(*fun oneDef (def,igraph) = foldr oneEdge (igraph,def) liveouts*)
 		        val (finaligraph,_) = foldr oneEdge (igraph,def) liveouts
@@ -162,20 +188,20 @@ val outTable : Temp.Set.set ioT.map = ioT.empty
 			(*val _ = print "before outTable"*)
 			val louts = valOf(ioT.find(outTable,label))
 			(*val _ = print"ourTable?"*)
-			val _ = print "Move outSet:"
-		        val _ = printSet louts
+			(*val _ = print "Move outSet:"
+		        val _ = printSet louts*)
 			val liveouts = Temp.Set.listItems(louts)
 			val use = List.hd(uses)
 			fun oneEdge (liveout, (igraph,def)) =
 			    let
-				val _ = print"inMove"
+				(*val _ = print"inMove"*)
 				val useinfo = List.hd(uses)
 				val moveinfer = (useinfo = liveout)
-			        val tempigraph1 = IGraph.addNode(igraph,def,0)
-				val tempigraph2 = IGraph.addNode(tempigraph1,liveout,0)
+			        (*val tempigraph1 = IGraph.addNode(igraph,def,0)
+				val tempigraph2 = IGraph.addNode(tempigraph1,liveout,0)*)
 			    in
-				if moveinfer then (tempigraph2,def)
-				else (IGraph.doubleEdge(tempigraph2,def,liveout),def)
+				if moveinfer then (igraph,def)
+				else (IGraph.doubleEdge(igraph,def,liveout),def)
 			    end
 			val (finaligraph,_) = foldr oneEdge (igraph,def) liveouts
 		   
@@ -185,9 +211,10 @@ val outTable : Temp.Set.set ioT.map = ioT.empty
 		    end
 	    in
 		if emptydef then igraph
-		else (print "nonempty";(if isMove then procMove (List.hd(defs))
+		else ((if isMove then procMove (List.hd(defs))
 		     else procNonMove (List.hd(defs))))
 	    end
+	val igraph = initIGraph (igraph_base,llist)
     in
 	((foldl oneBlock igraph llist),!movelist)
     end
@@ -198,7 +225,7 @@ val outTable : Temp.Set.set ioT.map = ioT.empty
 	  val (_,outT,_,_) = inoutAnalysis(flowgraph:(string * Temp.temp list * Temp.temp list * bool) FG.graph,llist)
 
 	  val (graph, moveList) = prodIGraph(outT,flowgraph:(string * Temp.temp list * Temp.temp list * bool) FG.graph,llist)
-	  val _ = print "finish igraph"
+	  (*val _ = print "finish igraph"*)
 	  (*val out = prodOut(outTable nodelist)*)
       in
 	  IGRAPH{graph=graph,moves=moveList} 

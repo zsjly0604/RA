@@ -79,9 +79,9 @@ structure MakeGraph: MAKEGRAPH =
 			
 	    fun prodEdges (instr,g) =
 		let
-		    
+		    (*val _ = print "getting ID\n";*)
 		    val ID = valOf(AG.find(!aIDmap,instr))
-		    val _ = print ("ID:" ^ Int.toString(ID)^"\n")
+		    (*val _ = print ("ID:" ^ Int.toString(ID)^"\n")*)
 		    fun prodEdge (j,g) =
 			if (ID = j) then g else
 			(G.addEdge(g,{from = ID,to = j}))
@@ -103,17 +103,17 @@ structure MakeGraph: MAKEGRAPH =
 					    SOME(j) => j
 					  | NONE => []
 			    val jlength = List.length(jlist)
-			    val _= print ("assem:"^ assem ^"jlist:" ^ Int.toString(jlength)^"\n")
+			    (*val _= print ("assem:"^ assem ^"jlist:" ^ Int.toString(jlength)^"\n")*)
 			    val isBranch' = ((dst=[]) andalso (src=[]))
 			    val isBranch = isBranch' andalso (jlength=1)
 			    val tolist' = map (fn label => valOf(LG.find(!lIDmap, label))) jlist
 			    val nextInsn = getNext(ID,!llist)
-			    val _ = print ("nextInsn:" ^ Int.toString(nextInsn))
+			    (*val _ = print ("nextInsn:" ^ Int.toString(nextInsn))*)
 			    val tolist = if isBranch then tolist'
 					 else (if (nextInsn = ID) then tolist' else (nextInsn::tolist'))
 			    val length = List.length(tolist)
 			in
-			    print ("tolist:" ^ Int.toString(length)^"\n");
+			    (*print ("tolist:" ^ Int.toString(length)^"\n");*)
 			    (foldl prodEdge g tolist)
 			end
 		      | A.LABEL{assem, lab} =>
@@ -132,13 +132,13 @@ structure MakeGraph: MAKEGRAPH =
 			end
 		end
 	    val g_empty: Flow.flowgraph = G.empty
-	    val _ = print "before adding base\n"
+	    (*val _ = print "before adding base\n"*)
 	    val g_base = foldl prodNode G.empty ilist
-	    val _ = print "before adding edge\n"
+	    (*val _ = print "before adding edge\n"*)
 	    val fg = foldl prodEdges g_base ilist
-	    val _ = print "after adding edge\n"
+	    (*val _ = print "after adding edge\n"*)
 	    val nodes = map (fn l => (G.getNode(fg, l))) (!llist)
-	    val _ = print "after getting nodes"
+	    (*val _ = print "after getting nodes"*)
 	in
 	    G.printGraph (fn (nid,(assem:string,def:Temp.temp list,use:Temp.temp list,isMove:bool)) => ("nid:"^Temp.makestring(nid)^"assem:"^assem)) fg;
 	    print"after print";

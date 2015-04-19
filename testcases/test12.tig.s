@@ -1,25 +1,25 @@
 main:
-	ws	$fp	0($sp)
+	sw	$fp	0($sp)
 	move	$fp	$sp
-	addiu	$sp	$sp	-40
-L173:
-	li $a1, 0
-	li $a0, 0
-	li $a2, 100
-	ble $a0, $a2, L171
-b L170
-L170:
+	addiu	$sp	$sp	-44
+L116:
+	li $a2, 0
+	li $a3, 0
+	li $a0, 100
+	ble $a3, $a0, L114
+b L113
+L113:
 	li $v0, 0
-	b L172
-L171:
-	addi $a1, $a1, 1
-	addi $a0, $a0, 1
-	li $a3, 100
-	blt $a0, $a3, L171
-b L174
-L174:
-	b L170
-L172:
+	b L115
+L114:
+	addi $a2, $a2, 1
+	addi $a3, $a3, 1
+	li $a1, 100
+	blt $a3, $a1, L114
+b L117
+L117:
+	b L113
+L115:
 	tmove	$sp	$fp
 	lw	$fp	0($sp)
 	jr	$ra

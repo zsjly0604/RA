@@ -262,7 +262,7 @@ fun color {interference = Liveness.IGRAPH{graph = graph, moves = moves}, initial
                          if (NS.member(!precolored, aw) orelse NS.member(!coloredNodes, aw)) then okColors := deleteItem(!okColors, getColor(aw)) else ()
                   end 
                   fun selectColor () = 
-                    let val selected = List.foldl (fn (a, b) => if valOf(RM.find(!colorUsed, a)) < valOf(RM.find(!colorUsed, b)) then a else b) (List.hd(!okColors)) (!okColors)                     val x = valOf(RM.find(!colorUsed, selected))
+                    let val selected = List.foldl (fn (a, b) => if valOf(RM.find(!colorUsed, a)) < valOf(RM.find(!colorUsed, b)) then a else b) (List.hd(!okColors)) (!okColors)          val x = valOf(RM.find(!colorUsed, selected))
                   in
                     colored := Temp.Map.insert(!colored, n, selected);
                     colorUsed := RM.insert(!colorUsed, selected, x + 1)
@@ -270,9 +270,8 @@ fun color {interference = Liveness.IGRAPH{graph = graph, moves = moves}, initial
              in
                selectStack := Stack.pop(!selectStack);
                List.app filterColor adjlist;
-               (if !okColors = [] then spilledNodes := n::(!spilledNodes)
-               else coloredNodes := NS.add(!coloredNodes, n));
-               selectColor()
+               (if (!okColors) = [] then spilledNodes := n::(!spilledNodes)
+               else (coloredNodes := NS.add(!coloredNodes, n);selectColor()))
             end
           fun colorCoalesced (n) =
                 let val an = getAlias(n)
