@@ -294,9 +294,13 @@ fun color {interference = Liveness.IGRAPH{graph = graph, moves = moves}, initial
   
   in
      build();
-     makeWorklist();
+     print "finish build";
+     (if NS.isEmpty(!initial) = false then makeWorklist() else ());
+     print "finish make worklist";
      repeat();
+     print "finish repeat";
      assignColors();
+     print "finish assigncolors";
      (!colored, !spilledNodes)
   end
 end

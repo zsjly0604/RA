@@ -12,7 +12,8 @@ struct
 
   datatype register = Reg of string
   structure TempMap = Temp.Map
-
+  val Impossible = ErrorMsg.impossible
+  
   val FP = Temp.newtemp() 
   val RV = Temp.newtemp()
   val RA = Temp.newtemp()
@@ -86,8 +87,13 @@ struct
   
   fun lookreg temp =
       case TempMap.find(tempMap,temp) of
-	  NONE => Reg "NonExistReg"
-	| SOME(Reg register) => Reg register
+	  NONE => Impossible "No such register"
+	| SOME(r) => r
+  
+  fun tempname temp =
+      case TempMap.find(tempMap,temp) of
+	  NONE => Temp.makestring temp
+	| SOME(Reg r) => r
   
   val registers = map lookreg (argregs @ calleesaves @ callersaves @ specialregs)				    
 		  

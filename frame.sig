@@ -34,4 +34,5 @@ sig type frame
     val procEntryExit3 : frame * Assem.instr list -> {prolog : string, body : Assem.instr list, epilog : string}
     val gettemp : Temp.temp * register -> Temp.temp
     val lookreg : Temp.temp -> register
+    val tempname : Temp.temp -> string
 end

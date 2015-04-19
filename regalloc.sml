@@ -37,8 +37,10 @@ struct
         List.foldl (fn (t,ins) => rewrite1(ins,t)) instrs spilledNodes
     end
 
-  fun alloc (instrs, iGraph, frame)  =
-    let val (colored, spilledNodes) = Color.color{interference = iGraph, initialAlloc = Frame.tempMap, registers = Frame.registers}
+  fun alloc (instrs, frame)  =
+    let val (flowGraph, nodeList,llist) = MakeGraph.instrs2graph(instrs)
+        val iGraph = Liveness.interferenceGraph (flowGraph, nodeList,llist) 
+        val (colored, spilledNodes) = Color.color{interference = iGraph, initialAlloc = Frame.tempMap, registers = Frame.registers}
         fun is_redundant instr =
           case instr of
               Assem.MOVE{assem,dst,src} =>
@@ -46,6 +48,6 @@ struct
             | _ => false 
     in
         if spilledNodes = [] then (List.filter (fn i => not (is_redundant i)) instrs,colored)
-        else alloc(rewrite(instrs, frame, spilledNodes), iGraph, frame)
+        else alloc(rewrite(instrs, frame, spilledNodes), frame)
      end
 end

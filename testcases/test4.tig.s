@@ -1,29 +1,37 @@
-L6:
-lw t145, 0(t101)
-move t106, 0(t145)
-li t146, 10
-move t107, 0(t146)
-jal L1
-move t104, 0(t104)
-b L5
-L5:
-L8:
-li t133, 1
-lw t149, -4(t101)
-beqz t149, L2
-b L3
-L3:
-lw t150, -4(t101)
-move t148, 0(t150)
-move t106, 0(t101)
-lw t163, -4(t101)
-addi t162, t163, -1
-move t107, 0(t162)
-jal L1
-move t147, 0(t104)
-mul t164, t148, t147
-move t133, 0(t164)
-L2:
-move t104, 0(t133)
-b L7
-L7:
+main:
+	ws	$fp	0($sp)
+	move	$fp	$sp
+	addiu	$sp	$sp	-40
+L134:
+	lw $a0, 6($fp)
+	li $a1, 10
+	jal L129
+	b L133
+L133:
+	tmove	$sp	$fp
+	lw	$fp	0($sp)
+	jr	$ra
+
+L129:
+	ws	$fp	0($sp)
+	move	$fp	$sp
+	addiu	$sp	$sp	-16
+L136:
+	li $v0, 1
+	lw $a3, -4($fp)
+	beqz $a3, L130
+b L131
+L131:
+	lw $a2, -4($fp)
+	move $a0, $fp
+	lw $t0, -4($fp)
+	addi $a1, $t0, -1
+	jal L129
+	mul $v0, $a2, $v0
+L130:
+	b L135
+L135:
+	tmove	$sp	$fp
+	lw	$fp	0($sp)
+	jr	$ra
+
