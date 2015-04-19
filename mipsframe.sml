@@ -160,7 +160,7 @@ struct
       let val offset = (!locals + (List.length argregs)) * wordSize
       in
 	{prolog = Symbol.name name ^ ":\n" ^
-                 "\tws\t$fp\t0($sp)\n" ^
+                 "\tsw\t$fp\t0($sp)\n" ^
                  "\tmove\t$fp\t$sp\n" ^
                  "\taddiu\t$sp\t$sp\t-" ^ Int.toString(offset) ^ "\n",
 	 body = body,
