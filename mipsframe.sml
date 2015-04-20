@@ -95,9 +95,7 @@ struct
 	  NONE => Temp.makestring temp
 	| SOME(Reg r) => r
   
-  val registers = map lookreg (argregs @ calleesaves @ callersaves @ specialregs)				    
-		  
-
+  val registers = map lookreg (argregs @ calleesaves @ callersaves @ [RV, RA])				   
   fun name (f:frame) = #name f
   
   fun formals (f:frame) = #formals f

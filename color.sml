@@ -236,7 +236,7 @@ fun color {interference = Liveness.IGRAPH{graph = graph, moves = moves}, initial
        end
 
      fun freeze () =
-       let val selected = List.foldl (fn (a, b) => if valOf(NM.find(!degree, a)) > valOf(NM.find(!degree, b)) then a else b) (List.hd(!freezeWorklist)) (!freezeWorklist)
+       let val selected = List.foldl (fn (a, b) => if getDegree(a) > getDegree(b) then a else b) (List.hd(!freezeWorklist)) (!freezeWorklist)
        in
          freezeWorklist := deleteItem(!freezeWorklist, selected);
          simplifyWorklist := selected::(!simplifyWorklist);
@@ -244,7 +244,7 @@ fun color {interference = Liveness.IGRAPH{graph = graph, moves = moves}, initial
        end
  
      fun selectSpill () =
-       let val selected = List.foldl (fn (a, b) => if valOf(NM.find(!degree, a)) > valOf(NM.find(!degree, b)) then a else b) (List.hd(!spillWorklist)) (!spillWorklist)
+       let val selected = List.foldl (fn (a, b) => if getDegree(a) > getDegree(b) then a else b) (List.hd(!spillWorklist)) (!spillWorklist)
        in  
          spillWorklist := deleteItem(!spillWorklist, selected);
          simplifyWorklist := selected::(!simplifyWorklist);
