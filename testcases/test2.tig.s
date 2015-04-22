@@ -2,13 +2,14 @@ main:
 	sw	$fp	0($sp)
 	move	$fp	$sp
 	addiu	$sp	$sp	-16
-L12:
-	li $a0, 10
-	li $a1, 0
+L6:
+	sw $a2, -4($fp)
+	li $a2, 10
+	li $a3, 0
 	jal initArray
-	b L11
-L11:
-	tmove	$sp	$fp
+	b L5
+L5:
+		move	$sp	$fp
 	lw	$fp	0($sp)
 	jr	$ra
 

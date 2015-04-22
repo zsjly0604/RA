@@ -92,7 +92,7 @@ fun color {interference = Liveness.IGRAPH{graph = graph, moves = moves}, initial
            val nadj = n::adj
        in
          degree := NM.insert(!degree, n, d - 1);
-         if d - 1 = K then (enableMoves nadj;
+         if d = K then (enableMoves nadj;
                             spillWorklist := deleteItem(!spillWorklist, n);
                             if moveRelated(n) then freezeWorklist := n::(!freezeWorklist)     
                              else simplifyWorklist := n::(!simplifyWorklist))
@@ -159,13 +159,11 @@ fun color {interference = Liveness.IGRAPH{graph = graph, moves = moves}, initial
              let val nid = IGraph.getNodeID n
              in 
                (case Temp.Map.find(initialAlloc, nid) of
-                  SOME reg => (print ((Temp.makestring nid) ^ "precolored\n");
-                               precolored := NS.add(!precolored, nid);
+                  SOME reg => (precolored := NS.add(!precolored, nid);
                                case RM.find(!colorUsed, reg) of
                                   NONE => colorUsed := RM.insert(!colorUsed, reg, 1)
 				| SOME x => colorUsed := RM.insert(!colorUsed, reg, x + 1))
-	        | NONE => (print ((Temp.makestring nid) ^ "initial\n");
-                           initial := NS.add(!initial, nid))); 
+	        | NONE => (initial := NS.add(!initial, nid))); 
                movelist := NM.insert(!movelist, nid, MS.empty);
                degree := NM.insert(!degree, nid, IGraph.degree n)        
              end
@@ -207,7 +205,7 @@ fun color {interference = Liveness.IGRAPH{graph = graph, moves = moves}, initial
        in
           simplifyWorklist := nl;
           selectStack := Stack.push(!selectStack, n);
-          print ("push " ^ (Temp.makestring n) ^ "\n");
+          print ("simplify " ^ (Temp.makestring n) ^ "\n");
           app decrementDegree adjn
        end
 
@@ -218,20 +216,15 @@ fun color {interference = Liveness.IGRAPH{graph = graph, moves = moves}, initial
           val (u, v) = case NS.member(!precolored, y) of
                          true => (y, x)
                        | false => (x, y)
-          val u' = IGraph.getNode(graph, u)
-          val v' = IGraph.getNode(graph, v) 
-          val adju = adjacent(u)
-          val adjv = adjacent(v)
-
           fun allOK (u, nodes) = not(List.exists(fn t => not(OK(t, u))) nodes)
        in
          worklistMoves := MS.delete(!worklistMoves, m);
          if (u = v) then (coalescedMoves := MS.add(!coalescedMoves, m);
                           addWorklist(u))
-         else if (NS.member(!precolored, v) orelse IGraph.isAdjacent(u', v')) then (constrainedMoves := MS.add(!constrainedMoves, m);
+         else if (NS.member(!precolored, v) orelse IGraph.isAdjacent(IGraph.getNode(graph, u), IGraph.getNode(graph, v))) then (constrainedMoves := MS.add(!constrainedMoves, m);
                      addWorklist(u);
                      addWorklist(v))
-               else if ((NS.member(!precolored, u) andalso allOK(u, adjv)) orelse (not(NS.member(!precolored, u)) andalso conservative(adju @ adjv))) then (coalescedMoves := MS.add(!coalescedMoves, m);combine(u, v);addWorklist(u))
+               else if ((NS.member(!precolored, u) andalso allOK(u, (adjacent u))) orelse (not(NS.member(!precolored, u)) andalso conservative((adjacent u) @ (adjacent v)))) then (coalescedMoves := MS.add(!coalescedMoves, m);combine(u, v);addWorklist(u))
                else activeMoves := MS.add(!activeMoves, m)
        end
 
@@ -285,21 +278,21 @@ fun color {interference = Liveness.IGRAPH{graph = graph, moves = moves}, initial
   end
       
     fun repeat () =
-        if !simplifyWorklist <> [] then (simplify(!simplifyWorklist);repeat())
-        else if MS.isEmpty(!worklistMoves) = false then (coalesce();repeat())
-             else if !freezeWorklist <> [] then (freeze();repeat()) 
-                  else if !spillWorklist <> [] then (selectSpill();repeat())
+        if !simplifyWorklist <> [] then (print "begin simplify\n";simplify(!simplifyWorklist);repeat())
+        else if MS.isEmpty(!worklistMoves) = false then (print "begin coalesce\n";coalesce();repeat())
+             else if !freezeWorklist <> [] then (print "begin freeze\n";freeze();repeat()) 
+                  else if !spillWorklist <> [] then (print "begin spill\n";selectSpill();repeat())
                        else () 
   
   in
      build();
-     print "finish build";
+     print "finish build\n";
      (if NS.isEmpty(!initial) = false then makeWorklist() else ());
-     print "finish make worklist";
+     print "finish make worklist\n";
      repeat();
-     print "finish repeat";
+     print "finish repeat\n";
      assignColors();
-     print "finish assigncolors";
+     print "finish assigncolors\n";
      (!colored, !spilledNodes)
   end
 end

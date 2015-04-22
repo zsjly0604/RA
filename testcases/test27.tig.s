@@ -1,27 +1,16 @@
 main:
 	sw	$fp	0($sp)
 	move	$fp	$sp
-	addiu	$sp	$sp	-44
-L121:
-	li $a2, 0
-	lw $a0, 7($fp)
-	li $a1, 2
-	jal L119
-	b L120
-L120:
-	tmove	$sp	$fp
-	lw	$fp	0($sp)
-	jr	$ra
-
-L119:
-	sw	$fp	0($sp)
-	move	$fp	$sp
 	addiu	$sp	$sp	-16
-L123:
-	lw $v0, -4($fp)
-	b L122
-L122:
-	tmove	$sp	$fp
+L10:
+	sw $a2, -4($fp)
+	li $t0, 0
+	lw $a2, 0($fp)
+	li $a3, 2
+	jal L8
+	b L9
+L9:
+		move	$sp	$fp
 	lw	$fp	0($sp)
 	jr	$ra
 

@@ -2,25 +2,42 @@ main:
 	sw	$fp	0($sp)
 	move	$fp	$sp
 	addiu	$sp	$sp	-16
-L5:
-	li $a2, 0
-	li $a3, 0
-	li $a0, 100
-	ble $a3, $a0, L3
-b L2
-L2:
+L82:
+	sw $a0, -4($fp)
+	move $t7, $ra
+	move $t6, $s0
+	move $t5, $s1
+	move $t4, $s2
+	move $t3, $s3
+	move $t2, $s4
+	move $t1, $s5
+	move $a2, $s6
+	li $a0, 0
+	li $a1, 0
+	li $a3, 100
+	ble $a1, $a3, L80
+b L79
+L79:
 	li $v0, 0
-	b L4
-L3:
-	addi $a2, $a2, 1
-	addi $a3, $a3, 1
-	li $a1, 100
-	blt $a3, $a1, L3
-b L6
-L6:
-	b L2
-L4:
-	tmove	$sp	$fp
+	move $s6, $a2
+	move $s5, $t1
+	move $s4, $t2
+	move $s3, $t3
+	move $s2, $t4
+	move $s1, $t5
+	move $s0, $t6
+	move $ra, $t7
+	b L81
+L80:
+	addi $a0, $a0, 1
+	addi $a1, $a1, 1
+	li $t0, 100
+	blt $a1, $t0, L80
+b L83
+L83:
+	b L79
+L81:
+		move	$sp	$fp
 	lw	$fp	0($sp)
 	jr	$ra
 

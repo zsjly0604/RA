@@ -1,0 +1,159 @@
+LABEL 	.globl tig_main
+LABEL 	.ent tig_main
+LABEL 	.text
+LABEL tig_main
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t129,
+			CONST ~4)),
+	TEMP t130)
+MOVE(
+	TEMP t130,
+	TEMP t129)
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~8)),
+	TEMP t129)
+MOVE(
+	TEMP t129,
+	BINOP(PLUS,
+		TEMP t129,
+		CONST ~48))
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~44)),
+	TEMP t131)
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~40)),
+	TEMP t116)
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~36)),
+	TEMP t117)
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~32)),
+	TEMP t118)
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~28)),
+	TEMP t119)
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~24)),
+	TEMP t120)
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~20)),
+	TEMP t121)
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~16)),
+	TEMP t122)
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~12)),
+	TEMP t123)
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST 0)),
+	TEMP t104)
+MOVE(
+	TEMP t102,
+	CONST 0)
+MOVE(
+	TEMP t131,
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~44)))
+MOVE(
+	TEMP t116,
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~40)))
+MOVE(
+	TEMP t117,
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~36)))
+MOVE(
+	TEMP t118,
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~32)))
+MOVE(
+	TEMP t119,
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~28)))
+MOVE(
+	TEMP t120,
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~24)))
+MOVE(
+	TEMP t121,
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~20)))
+MOVE(
+	TEMP t122,
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~16)))
+MOVE(
+	TEMP t123,
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~12)))
+MOVE(
+	TEMP t129,
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~8)))
+MOVE(
+	TEMP t130,
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~4)))
+JUMP(
+	TEMP t131)
+LABEL 	.end tig_main
+JUMP(
+	NAME L1)
+LABEL L1

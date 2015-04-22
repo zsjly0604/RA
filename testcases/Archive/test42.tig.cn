@@ -1,0 +1,387 @@
+LABEL 	.globl tig_main
+LABEL 	.ent tig_main
+LABEL 	.text
+LABEL tig_main
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t129,
+			CONST ~4)),
+	TEMP t130)
+MOVE(
+	TEMP t130,
+	TEMP t129)
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~8)),
+	TEMP t129)
+MOVE(
+	TEMP t129,
+	BINOP(PLUS,
+		TEMP t129,
+		CONST ~48))
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~44)),
+	TEMP t131)
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~40)),
+	TEMP t116)
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~36)),
+	TEMP t117)
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~32)),
+	TEMP t118)
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~28)),
+	TEMP t119)
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~24)),
+	TEMP t120)
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~20)),
+	TEMP t121)
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~16)),
+	TEMP t122)
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~12)),
+	TEMP t123)
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST 0)),
+	TEMP t104)
+MOVE(
+	TEMP t132,
+	CALL(
+		NAME tig_initArray,
+			CONST 10,
+			CONST 0))
+MOVE(
+	TEMP t133,
+	CALL(
+		NAME tig_allocRecord,
+			CONST 16))
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t133,
+			CONST 0)),
+	NAME L1)
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t133,
+			CONST 4)),
+	NAME L2)
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t133,
+			CONST 8)),
+	CONST 0)
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t133,
+			CONST 12)),
+	CONST 0)
+MOVE(
+	TEMP t134,
+	CALL(
+		NAME tig_initArray,
+			CONST 5,
+			TEMP t133))
+MOVE(
+	TEMP t135,
+	CALL(
+		NAME tig_initArray,
+			CONST 100,
+			NAME L3))
+MOVE(
+	TEMP t136,
+	CALL(
+		NAME tig_allocRecord,
+			CONST 16))
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t136,
+			CONST 0)),
+	NAME L4)
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t136,
+			CONST 4)),
+	NAME L5)
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t136,
+			CONST 8)),
+	CONST 2432)
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t136,
+			CONST 12)),
+	CONST 44)
+MOVE(
+	TEMP t137,
+	TEMP t136)
+MOVE(
+	TEMP t138,
+	CALL(
+		NAME tig_allocRecord,
+			CONST 8))
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t138,
+			CONST 0)),
+	NAME L6)
+MOVE(
+	TEMP t141,
+	BINOP(PLUS,
+		TEMP t138,
+		CONST 4))
+MOVE(
+	TEMP t140,
+	CALL(
+		NAME tig_initArray,
+			CONST 3,
+			CONST 1900))
+MOVE(
+	MEM(
+		TEMP t141),
+	TEMP t140)
+MOVE(
+	TEMP t139,
+	TEMP t138)
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t132,
+			BINOP(PLUS,
+				CONST 4,
+				BINOP(MUL,
+					CONST 0,
+					CONST 4)))),
+	CONST 1)
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t132,
+			BINOP(PLUS,
+				CONST 4,
+				BINOP(MUL,
+					CONST 9,
+					CONST 4)))),
+	CONST 3)
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			MEM(
+				BINOP(PLUS,
+					TEMP t134,
+					BINOP(PLUS,
+						CONST 4,
+						BINOP(MUL,
+							CONST 3,
+							CONST 4)))),
+			CONST 0)),
+	NAME L7)
+EXP(
+	CALL(
+		NAME tig_print,
+			MEM(
+				BINOP(PLUS,
+					MEM(
+						BINOP(PLUS,
+							TEMP t134,
+							BINOP(PLUS,
+								CONST 4,
+								BINOP(MUL,
+									CONST 3,
+									CONST 4)))),
+					CONST 0))))
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			MEM(
+				BINOP(PLUS,
+					TEMP t134,
+					BINOP(PLUS,
+						CONST 4,
+						BINOP(MUL,
+							CONST 1,
+							CONST 4)))),
+			CONST 12)),
+	CONST 23)
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t135,
+			BINOP(PLUS,
+				CONST 4,
+				BINOP(MUL,
+					CONST 34,
+					CONST 4)))),
+	NAME L8)
+EXP(
+	CALL(
+		NAME tig_print,
+			MEM(
+				BINOP(PLUS,
+					TEMP t135,
+					BINOP(PLUS,
+						CONST 4,
+						BINOP(MUL,
+							CONST 34,
+							CONST 4))))))
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			TEMP t137,
+			CONST 0)),
+	NAME L9)
+EXP(
+	CALL(
+		NAME tig_print,
+			MEM(
+				BINOP(PLUS,
+					TEMP t137,
+					CONST 0))))
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			MEM(
+				BINOP(PLUS,
+					TEMP t139,
+					CONST 4)),
+			BINOP(PLUS,
+				CONST 4,
+				BINOP(MUL,
+					CONST 0,
+					CONST 4)))),
+	CONST 2323)
+MOVE(
+	MEM(
+		BINOP(PLUS,
+			MEM(
+				BINOP(PLUS,
+					TEMP t139,
+					CONST 4)),
+			BINOP(PLUS,
+				CONST 4,
+				BINOP(MUL,
+					CONST 2,
+					CONST 4)))),
+	CONST 2323)
+MOVE(
+	TEMP t102,
+	CONST 0)
+MOVE(
+	TEMP t131,
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~44)))
+MOVE(
+	TEMP t116,
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~40)))
+MOVE(
+	TEMP t117,
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~36)))
+MOVE(
+	TEMP t118,
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~32)))
+MOVE(
+	TEMP t119,
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~28)))
+MOVE(
+	TEMP t120,
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~24)))
+MOVE(
+	TEMP t121,
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~20)))
+MOVE(
+	TEMP t122,
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~16)))
+MOVE(
+	TEMP t123,
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~12)))
+MOVE(
+	TEMP t129,
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~8)))
+MOVE(
+	TEMP t130,
+	MEM(
+		BINOP(PLUS,
+			TEMP t130,
+			CONST ~4)))
+JUMP(
+	TEMP t131)
+LABEL 	.end tig_main
+JUMP(
+	NAME L10)
+LABEL L10

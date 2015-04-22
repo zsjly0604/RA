@@ -72,10 +72,9 @@ struct
   fun procEntryExit ({level= outermost, body=body}) = (Impossible "Error: no function should be at the ROOT level!")       
     | procEntryExit ({level= nestLevel ({frame=frame, parent=parent}, unique), body = body}) = 
     let
-      val body' = F.procEntryExit1(frame, unNx body)
-      val moveStm = T.MOVE(T.TEMP F.RV, unEx body)
+      val body' = F.procEntryExit1(frame, T.MOVE(T.TEMP F.RV, unEx body))
     in
-      frags := (F.PROC {body = moveStm, frame = frame})::(!frags)
+      frags := (F.PROC {body = body', frame = frame})::(!frags)
     end
 
    fun formals (outermost) = (Impossible "no formals at outermost")

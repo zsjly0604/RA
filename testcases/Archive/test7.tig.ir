@@ -1,0 +1,597 @@
+SEQ(
+	LABEL 	.globl do_nothing1,
+	SEQ(
+		LABEL 	.ent do_nothing1,
+		SEQ(
+			LABEL 	.text,
+			SEQ(
+				LABEL do_nothing1,
+				SEQ(
+					SEQ(
+						MOVE(
+							MEM(
+								BINOP(PLUS,
+									TEMP t129,
+									CONST ~4)),
+							TEMP t130),
+						SEQ(
+							MOVE(
+								TEMP t130,
+								TEMP t129),
+							SEQ(
+								MOVE(
+									MEM(
+										BINOP(PLUS,
+											TEMP t130,
+											CONST ~8)),
+									TEMP t129),
+								SEQ(
+									MOVE(
+										TEMP t129,
+										BINOP(PLUS,
+											TEMP t129,
+											CONST ~48)),
+									SEQ(
+										MOVE(
+											MEM(
+												BINOP(PLUS,
+													TEMP t130,
+													CONST ~44)),
+											TEMP t131),
+										SEQ(
+											MOVE(
+												MEM(
+													BINOP(PLUS,
+														TEMP t130,
+														CONST ~40)),
+												TEMP t116),
+											SEQ(
+												MOVE(
+													MEM(
+														BINOP(PLUS,
+															TEMP t130,
+															CONST ~36)),
+													TEMP t117),
+												SEQ(
+													MOVE(
+														MEM(
+															BINOP(PLUS,
+																TEMP t130,
+																CONST ~32)),
+														TEMP t118),
+													SEQ(
+														MOVE(
+															MEM(
+																BINOP(PLUS,
+																	TEMP t130,
+																	CONST ~28)),
+															TEMP t119),
+														SEQ(
+															MOVE(
+																MEM(
+																	BINOP(PLUS,
+																		TEMP t130,
+																		CONST ~24)),
+																TEMP t120),
+															SEQ(
+																MOVE(
+																	MEM(
+																		BINOP(PLUS,
+																			TEMP t130,
+																			CONST ~20)),
+																	TEMP t121),
+																SEQ(
+																	MOVE(
+																		MEM(
+																			BINOP(PLUS,
+																				TEMP t130,
+																				CONST ~16)),
+																		TEMP t122),
+																	MOVE(
+																		MEM(
+																			BINOP(PLUS,
+																				TEMP t130,
+																				CONST ~12)),
+																		TEMP t123))))))))))))),
+					SEQ(
+						SEQ(
+							MOVE(
+								TEMP t133,
+								TEMP t106),
+							SEQ(
+								MOVE(
+									TEMP t132,
+									TEMP t105),
+								MOVE(
+									MEM(
+										BINOP(PLUS,
+											TEMP t130,
+											CONST 0)),
+									TEMP t104))),
+						SEQ(
+							MOVE(
+								TEMP t102,
+								ESEQ(
+									EXP(
+										CALL(
+											NAME do_nothing2,
+												MEM(
+													TEMP t130),
+												BINOP(PLUS,
+													TEMP t132,
+													CONST 1))),
+									CONST 0)),
+							SEQ(
+								SEQ(
+									MOVE(
+										TEMP t131,
+										MEM(
+											BINOP(PLUS,
+												TEMP t130,
+												CONST ~44))),
+									SEQ(
+										MOVE(
+											TEMP t116,
+											MEM(
+												BINOP(PLUS,
+													TEMP t130,
+													CONST ~40))),
+										SEQ(
+											MOVE(
+												TEMP t117,
+												MEM(
+													BINOP(PLUS,
+														TEMP t130,
+														CONST ~36))),
+											SEQ(
+												MOVE(
+													TEMP t118,
+													MEM(
+														BINOP(PLUS,
+															TEMP t130,
+															CONST ~32))),
+												SEQ(
+													MOVE(
+														TEMP t119,
+														MEM(
+															BINOP(PLUS,
+																TEMP t130,
+																CONST ~28))),
+													SEQ(
+														MOVE(
+															TEMP t120,
+															MEM(
+																BINOP(PLUS,
+																	TEMP t130,
+																	CONST ~24))),
+														SEQ(
+															MOVE(
+																TEMP t121,
+																MEM(
+																	BINOP(PLUS,
+																		TEMP t130,
+																		CONST ~20))),
+															SEQ(
+																MOVE(
+																	TEMP t122,
+																	MEM(
+																		BINOP(PLUS,
+																			TEMP t130,
+																			CONST ~16))),
+																SEQ(
+																	MOVE(
+																		TEMP t123,
+																		MEM(
+																			BINOP(PLUS,
+																				TEMP t130,
+																				CONST ~12))),
+																	SEQ(
+																		MOVE(
+																			TEMP t129,
+																			MEM(
+																				BINOP(PLUS,
+																					TEMP t130,
+																					CONST ~8))),
+																		MOVE(
+																			TEMP t130,
+																			MEM(
+																				BINOP(PLUS,
+																					TEMP t130,
+																					CONST ~4))))))))))))),
+								SEQ(
+									JUMP(
+										TEMP t131),
+									LABEL 	.end do_nothing1)))))))))
+SEQ(
+	LABEL 	.globl do_nothing2,
+	SEQ(
+		LABEL 	.ent do_nothing2,
+		SEQ(
+			LABEL 	.text,
+			SEQ(
+				LABEL do_nothing2,
+				SEQ(
+					SEQ(
+						MOVE(
+							MEM(
+								BINOP(PLUS,
+									TEMP t129,
+									CONST ~4)),
+							TEMP t130),
+						SEQ(
+							MOVE(
+								TEMP t130,
+								TEMP t129),
+							SEQ(
+								MOVE(
+									MEM(
+										BINOP(PLUS,
+											TEMP t130,
+											CONST ~8)),
+									TEMP t129),
+								SEQ(
+									MOVE(
+										TEMP t129,
+										BINOP(PLUS,
+											TEMP t129,
+											CONST ~48)),
+									SEQ(
+										MOVE(
+											MEM(
+												BINOP(PLUS,
+													TEMP t130,
+													CONST ~44)),
+											TEMP t131),
+										SEQ(
+											MOVE(
+												MEM(
+													BINOP(PLUS,
+														TEMP t130,
+														CONST ~40)),
+												TEMP t116),
+											SEQ(
+												MOVE(
+													MEM(
+														BINOP(PLUS,
+															TEMP t130,
+															CONST ~36)),
+													TEMP t117),
+												SEQ(
+													MOVE(
+														MEM(
+															BINOP(PLUS,
+																TEMP t130,
+																CONST ~32)),
+														TEMP t118),
+													SEQ(
+														MOVE(
+															MEM(
+																BINOP(PLUS,
+																	TEMP t130,
+																	CONST ~28)),
+															TEMP t119),
+														SEQ(
+															MOVE(
+																MEM(
+																	BINOP(PLUS,
+																		TEMP t130,
+																		CONST ~24)),
+																TEMP t120),
+															SEQ(
+																MOVE(
+																	MEM(
+																		BINOP(PLUS,
+																			TEMP t130,
+																			CONST ~20)),
+																	TEMP t121),
+																SEQ(
+																	MOVE(
+																		MEM(
+																			BINOP(PLUS,
+																				TEMP t130,
+																				CONST ~16)),
+																		TEMP t122),
+																	MOVE(
+																		MEM(
+																			BINOP(PLUS,
+																				TEMP t130,
+																				CONST ~12)),
+																		TEMP t123))))))))))))),
+					SEQ(
+						SEQ(
+							MOVE(
+								TEMP t134,
+								TEMP t105),
+							MOVE(
+								MEM(
+									BINOP(PLUS,
+										TEMP t130,
+										CONST 0)),
+								TEMP t104)),
+						SEQ(
+							MOVE(
+								TEMP t102,
+								ESEQ(
+									EXP(
+										CALL(
+											NAME do_nothing1,
+												MEM(
+													TEMP t130),
+												TEMP t134,
+												NAME L1)),
+									NAME L2)),
+							SEQ(
+								SEQ(
+									MOVE(
+										TEMP t131,
+										MEM(
+											BINOP(PLUS,
+												TEMP t130,
+												CONST ~44))),
+									SEQ(
+										MOVE(
+											TEMP t116,
+											MEM(
+												BINOP(PLUS,
+													TEMP t130,
+													CONST ~40))),
+										SEQ(
+											MOVE(
+												TEMP t117,
+												MEM(
+													BINOP(PLUS,
+														TEMP t130,
+														CONST ~36))),
+											SEQ(
+												MOVE(
+													TEMP t118,
+													MEM(
+														BINOP(PLUS,
+															TEMP t130,
+															CONST ~32))),
+												SEQ(
+													MOVE(
+														TEMP t119,
+														MEM(
+															BINOP(PLUS,
+																TEMP t130,
+																CONST ~28))),
+													SEQ(
+														MOVE(
+															TEMP t120,
+															MEM(
+																BINOP(PLUS,
+																	TEMP t130,
+																	CONST ~24))),
+														SEQ(
+															MOVE(
+																TEMP t121,
+																MEM(
+																	BINOP(PLUS,
+																		TEMP t130,
+																		CONST ~20))),
+															SEQ(
+																MOVE(
+																	TEMP t122,
+																	MEM(
+																		BINOP(PLUS,
+																			TEMP t130,
+																			CONST ~16))),
+																SEQ(
+																	MOVE(
+																		TEMP t123,
+																		MEM(
+																			BINOP(PLUS,
+																				TEMP t130,
+																				CONST ~12))),
+																	SEQ(
+																		MOVE(
+																			TEMP t129,
+																			MEM(
+																				BINOP(PLUS,
+																					TEMP t130,
+																					CONST ~8))),
+																		MOVE(
+																			TEMP t130,
+																			MEM(
+																				BINOP(PLUS,
+																					TEMP t130,
+																					CONST ~4))))))))))))),
+								SEQ(
+									JUMP(
+										TEMP t131),
+									LABEL 	.end do_nothing2)))))))))
+SEQ(
+	LABEL 	.globl tig_main,
+	SEQ(
+		LABEL 	.ent tig_main,
+		SEQ(
+			LABEL 	.text,
+			SEQ(
+				LABEL tig_main,
+				SEQ(
+					SEQ(
+						MOVE(
+							MEM(
+								BINOP(PLUS,
+									TEMP t129,
+									CONST ~4)),
+							TEMP t130),
+						SEQ(
+							MOVE(
+								TEMP t130,
+								TEMP t129),
+							SEQ(
+								MOVE(
+									MEM(
+										BINOP(PLUS,
+											TEMP t130,
+											CONST ~8)),
+									TEMP t129),
+								SEQ(
+									MOVE(
+										TEMP t129,
+										BINOP(PLUS,
+											TEMP t129,
+											CONST ~48)),
+									SEQ(
+										MOVE(
+											MEM(
+												BINOP(PLUS,
+													TEMP t130,
+													CONST ~44)),
+											TEMP t131),
+										SEQ(
+											MOVE(
+												MEM(
+													BINOP(PLUS,
+														TEMP t130,
+														CONST ~40)),
+												TEMP t116),
+											SEQ(
+												MOVE(
+													MEM(
+														BINOP(PLUS,
+															TEMP t130,
+															CONST ~36)),
+													TEMP t117),
+												SEQ(
+													MOVE(
+														MEM(
+															BINOP(PLUS,
+																TEMP t130,
+																CONST ~32)),
+														TEMP t118),
+													SEQ(
+														MOVE(
+															MEM(
+																BINOP(PLUS,
+																	TEMP t130,
+																	CONST ~28)),
+															TEMP t119),
+														SEQ(
+															MOVE(
+																MEM(
+																	BINOP(PLUS,
+																		TEMP t130,
+																		CONST ~24)),
+																TEMP t120),
+															SEQ(
+																MOVE(
+																	MEM(
+																		BINOP(PLUS,
+																			TEMP t130,
+																			CONST ~20)),
+																	TEMP t121),
+																SEQ(
+																	MOVE(
+																		MEM(
+																			BINOP(PLUS,
+																				TEMP t130,
+																				CONST ~16)),
+																		TEMP t122),
+																	MOVE(
+																		MEM(
+																			BINOP(PLUS,
+																				TEMP t130,
+																				CONST ~12)),
+																		TEMP t123))))))))))))),
+					SEQ(
+						MOVE(
+							MEM(
+								BINOP(PLUS,
+									TEMP t130,
+									CONST 0)),
+							TEMP t104),
+						SEQ(
+							MOVE(
+								TEMP t102,
+								ESEQ(
+									EXP(
+										CONST 0),
+									CALL(
+										NAME do_nothing1,
+											TEMP t130,
+											CONST 0,
+											NAME L3))),
+							SEQ(
+								SEQ(
+									MOVE(
+										TEMP t131,
+										MEM(
+											BINOP(PLUS,
+												TEMP t130,
+												CONST ~44))),
+									SEQ(
+										MOVE(
+											TEMP t116,
+											MEM(
+												BINOP(PLUS,
+													TEMP t130,
+													CONST ~40))),
+										SEQ(
+											MOVE(
+												TEMP t117,
+												MEM(
+													BINOP(PLUS,
+														TEMP t130,
+														CONST ~36))),
+											SEQ(
+												MOVE(
+													TEMP t118,
+													MEM(
+														BINOP(PLUS,
+															TEMP t130,
+															CONST ~32))),
+												SEQ(
+													MOVE(
+														TEMP t119,
+														MEM(
+															BINOP(PLUS,
+																TEMP t130,
+																CONST ~28))),
+													SEQ(
+														MOVE(
+															TEMP t120,
+															MEM(
+																BINOP(PLUS,
+																	TEMP t130,
+																	CONST ~24))),
+														SEQ(
+															MOVE(
+																TEMP t121,
+																MEM(
+																	BINOP(PLUS,
+																		TEMP t130,
+																		CONST ~20))),
+															SEQ(
+																MOVE(
+																	TEMP t122,
+																	MEM(
+																		BINOP(PLUS,
+																			TEMP t130,
+																			CONST ~16))),
+																SEQ(
+																	MOVE(
+																		TEMP t123,
+																		MEM(
+																			BINOP(PLUS,
+																				TEMP t130,
+																				CONST ~12))),
+																	SEQ(
+																		MOVE(
+																			TEMP t129,
+																			MEM(
+																				BINOP(PLUS,
+																					TEMP t130,
+																					CONST ~8))),
+																		MOVE(
+																			TEMP t130,
+																			MEM(
+																				BINOP(PLUS,
+																					TEMP t130,
+																					CONST ~4))))))))))))),
+								SEQ(
+									JUMP(
+										TEMP t131),
+									LABEL 	.end tig_main)))))))))
