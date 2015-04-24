@@ -128,33 +128,42 @@ val outTable : Temp.Set.set ioT.map = ioT.empty
 	      
   fun prodIGraph (outTable: Temp.Set.set ioT.map,flowgraph:(string * Temp.temp list * Temp.temp list * bool) FG.graph,llist:Temp.temp list) =
       let
-	val igraph_base:Temp.temp IGraph.graph = IGraph.empty
-	val movelist = ref []
-	fun outer (label,igraph) =
-	    let
-		val (_,(_,defs,uses,isMove),s,p) = FG.getNode(flowgraph,label)
-		val emptydef = (defs = [])
-		fun procOneInsn def =
-		    let
-			val louts = valOf(ioT.find(outTable,label))
-		        val liveouts = Temp.Set.listItems(louts)
-			fun addtwoNodes (liveout,(igraph,def)) =
-			    let
+	  val igraph_init:Temp.temp IGraph.graph = IGraph.empty
+          fun addspecialregs igraph =
+	      let
+		  fun addonenode (temp,igraph) =
+		      IGraph.addNode(igraph,temp,0)
+	      in
+		  foldl addonenode igraph MipsFrame.specialregs
+	      end
+	  val igraph_base_1 = addspecialregs(igraph_init);
+	  val igraph_base = IGraph.addNode(igraph_base_1,106,0);
+	  val movelist = ref []
+	  fun outer (label,igraph) =
+	      let
+		  val (_,(_,defs,uses,isMove),s,p) = FG.getNode(flowgraph,label)
+		  val emptydef = (defs = [])
+		  fun procOneInsn def =
+		      let
+			  val louts = valOf(ioT.find(outTable,label))
+		          val liveouts = Temp.Set.listItems(louts)
+			  fun addtwoNodes (liveout,(igraph,def)) =
+			      let
 				val tempigraph1 = IGraph.addNode(igraph,def,0)
 				val tempigraph2 = IGraph.addNode(tempigraph1,liveout,0)
-			    in
-				(tempigraph2,def)
-			    end
-			val (initigraph1,_) = foldr addtwoNodes (igraph,def) liveouts
-		    in
-			initigraph1
-		    end
-	    in
-		if emptydef then igraph else procOneInsn (List.hd(defs))
-	    end
-
+			      in
+				  (tempigraph2,def)
+			      end
+			  val (initigraph1,_) = foldr addtwoNodes (igraph,def) liveouts
+		      in
+			  initigraph1
+		      end
+	      in
+		  if emptydef then igraph else procOneInsn (List.hd(defs))
+	      end
+		  
         fun initIGraph (igraph,llist) = foldl outer igraph llist
-		    
+					      
 		
 	fun oneBlock (label,igraph) =
 	    let

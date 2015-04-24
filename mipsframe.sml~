@@ -128,12 +128,12 @@ struct
       
   fun newFrame ({name:Temp.label, formals = formals}) =
       let
-	  val _ = argoffset:= 0
+	  val argoffset = ref 0
 	  val offset = ref 0
           val viewshiftInsns = ref [] : T.stm list ref
 	  val allocateSL = ((!viewshiftInsns)@[T.MOVE(exp (InFrame(0)) (T.TEMP FP),T.TEMP (List.nth(argregs,!argoffset)))];
 	                    InFrame(!offset))
-	  val _ = argoffset:=((!argoffset)+1)
+	  val argoffset:=((!argoffset)+1)
 	  fun allocFrame(escape) =
 	      let
 		  val temp = Temp.newtemp()
@@ -141,13 +141,12 @@ struct
 		  if escape
 		  then (offset := !offset -wordSize;
 			viewshiftInsns:=(!viewshiftInsns)@[T.MOVE(exp (InFrame(!offset))(T.TEMP FP), T.TEMP (List.nth(argregs,!argoffset)))];
-			argoffset := ((!argoffset)+1);
+			argoffset := (!argoffset)+1;
 			InFrame(!offset))
 		  else (viewshiftInsns:=(!viewshiftInsns)@[T.MOVE(T.TEMP temp,T.TEMP(List.nth(argregs,!argoffset)))];
 	          argoffset := (!argoffset)+1;
 	          InReg(Temp.newtemp()))
 	      end
-	  val _= argoffset:=0
       in
 	  {name = name, formals = (map allocFrame formals),offset = offset, locals = ref 0, moveArg = seq(!viewshiftInsns)}
       end

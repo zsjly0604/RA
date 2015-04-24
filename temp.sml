@@ -5,6 +5,8 @@ struct
     val labelCount = ref 0
     val temps = ref 100
 
+    fun resetTempCount () = (temps := 102) 
+
     fun reset () = 
 	let val () = temps := 100
 	    val () = labelCount := 0

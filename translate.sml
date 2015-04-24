@@ -107,7 +107,7 @@ struct
 
   fun newDoneLabel () = Temp.newlabel()
   
-  val mainLevel = newLevel({name = Temp.namedlabel "main", formals = [], parent = outermost})
+  val mainLevel = newLevel({name = Temp.namedlabel "tig_main", formals = [], parent = outermost})
 
   fun nilExp () = Ex(T.CONST 0)
 
@@ -122,7 +122,8 @@ struct
           SOME(F.STRING(lab, s)) => Ex(T.NAME lab)
         | NONE => let val lab = Temp.newlabel()
                   in
-                     !frags = F.STRING(lab, str) :: (!frags);
+		      print "adding string to frag...";
+		      frags := F.STRING(lab, str) :: (!frags);
                      Ex(T.NAME lab)
                   end
 	| _  => Impossible "string can't stored as function"
@@ -265,7 +266,7 @@ struct
    fun recordExp (fields) = 
      let val r = Temp.newtemp()
          val size = List.length(fields)
-         val recordBase = T.MOVE(T.TEMP r, F.externalCall("allocRecord", [T.CONST (size * F.wordSize)]))
+         val recordBase = T.MOVE(T.TEMP r, F.externalCall("tig_allocRecord", [T.CONST (size * F.wordSize)]))
          fun initialize (fields, index) =
            case fields of
              [] => []
@@ -275,6 +276,6 @@ struct
      end
 
   fun arrayExp (size, init) =
-     Ex(F.externalCall("initArray", [unEx size, unEx init]))
+     Ex(F.externalCall("tig_initArray", [unEx size, unEx init]))
 
 end

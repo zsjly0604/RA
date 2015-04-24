@@ -91,7 +91,8 @@ struct
     fun exp (InFrame(k)) = 
       let
 	  fun getexp(framePointer) =
-	      Tree.MEM(Tree.BINOP(Tree.PLUS, framePointer, Tree.CONST(k)))
+	     (print("const k is :"^Int.toString(k)^"\n");
+	      Tree.MEM(Tree.BINOP(Tree.PLUS, framePointer, Tree.CONST(k))))
       in
        getexp
       end
@@ -117,11 +118,15 @@ struct
   
   fun formals (f:frame) = #formals f
   
-  fun allocLocal ({name = name, formals = formals, offset = offset, locals = locals,moveArg = moveArg}) =
-      let val CurrOffset = offset		  
-      fun allocLoc(escape) = if escape
-			     then (CurrOffset := !CurrOffset - wordSize;(locals := !locals+1);InFrame(!CurrOffset))
-			     else InReg(Temp.newtemp())
+  fun allocLocal ({name = name, formals = formals, offset = offset, locals = locals,moveArg=moveArg}) =
+      let 	  
+	  fun allocLoc(escape) = if escape
+				 then (offset := (!offset - wordSize);
+				       (locals := !locals+1);
+				       print "in allocLocal,offset = ";
+				       print (Int.toString(!offset)^"\n");
+				       InFrame(!offset))
+				 else InReg(Temp.newtemp())
       in
 	  allocLoc
       end
@@ -131,25 +136,26 @@ struct
 	  val _ = argoffset:= 0
 	  val offset = ref 0
           val viewshiftInsns = ref [] : T.stm list ref
-	  val allocateSL = ((!viewshiftInsns)@[T.MOVE(exp (InFrame(0)) (T.TEMP FP),T.TEMP (List.nth(argregs,!argoffset)))];
+	  val allocatedSL = (viewshiftInsns :=(!viewshiftInsns)@[T.MOVE(exp (InFrame(!offset)) (T.TEMP FP),T.TEMP (List.nth(argregs,0)))];
 	                    InFrame(!offset))
-	  val _ = argoffset:=((!argoffset)+1)
+	  val _ = argoffset:=(!argoffset)+1
 	  fun allocFrame(escape) =
 	      let
 		  val temp = Temp.newtemp()
 	      in
 		  if escape
 		  then (offset := !offset -wordSize;
-			viewshiftInsns:=(!viewshiftInsns)@[T.MOVE(exp (InFrame(!offset))(T.TEMP FP), T.TEMP (List.nth(argregs,!argoffset)))];
 			argoffset := ((!argoffset)+1);
+			viewshiftInsns:=(!viewshiftInsns)@[T.MOVE(exp (InFrame(!offset))(T.TEMP FP), T.TEMP (List.nth(argregs,!argoffset)))];
+			print ("escape in "^Symbol.name(name)^"\n");
 			InFrame(!offset))
-		  else (viewshiftInsns:=(!viewshiftInsns)@[T.MOVE(T.TEMP temp,T.TEMP(List.nth(argregs,!argoffset)))];
-	          argoffset := (!argoffset)+1;
-	          InReg(Temp.newtemp()))
+		  else (argoffset := (!argoffset+1);
+			viewshiftInsns:=(!viewshiftInsns)@[T.MOVE(T.TEMP temp,T.TEMP(List.nth(argregs,!argoffset)))];
+	                InReg(Temp.newtemp()))
 	      end
 	  val _= argoffset:=0
       in
-	  {name = name, formals = (map allocFrame formals),offset = offset, locals = ref 0, moveArg = seq(!viewshiftInsns)}
+	  {name = name, formals = allocatedSL::(map allocFrame formals),offset = offset, locals = ref 0, moveArg = seq(!viewshiftInsns)}
       end
 
     fun externalCall (funcname, args) =
@@ -159,11 +165,32 @@ struct
     fun procEntryExit1 (frame:frame,body) =
 	let
 	    val args = #moveArg frame
-            val pairs = map (fn r => ((allocLocal frame false), r)) (RA::calleesaves)        
-            val saves = map (fn (a, r) => T.MOVE(exp a (T.TEMP FP), T.TEMP r)) pairs
+	    val label = #name frame
+	    val offset = #offset frame
+	    val _ = print ("offset:"^Int.toString(!offset))
+	    val _ = offset := ((!offset) - 4)
+	    val _ = print ("offset:"^Int.toString(!offset))
+	    val fpSave = T.MOVE(T.MEM(T.BINOP(T.PLUS, T.TEMP SP, T.CONST(!offset))), T.TEMP FP)
+	    val _ = offset := ((!offset) - 4)
+	    val _ = print ("offset:"^Int.toString(!offset))
+	    val spSave = T.MOVE(T.MEM(T.BINOP(T.PLUS, T.TEMP FP, T.CONST(!offset))), T.TEMP SP)
+	    val fpUpdate = T.MOVE(T.TEMP FP, T.TEMP SP)
+	    (*val _ = print ("offset:"^Int.toString(!offset))*)
+	    val spUpdate = T.MOVE(T.TEMP SP, T.BINOP(T.PLUS, T.TEMP SP, T.CONST((!offset-40))))
+	    val pairs = map (fn r => ((allocLocal frame true), r)) (RA::calleesaves) 
+	    val saves = map (fn (a, r) => T.MOVE(exp a (T.TEMP FP), T.TEMP r)) pairs
             val restores = map (fn (a, r) => T.MOVE(T.TEMP r, exp a (T.TEMP FP))) (List.rev pairs)
+	    val fpRestore = T.MOVE(T.TEMP FP, T.MEM(T.BINOP(T.PLUS, T.TEMP FP, T.CONST(!offset+36))))
+	    (*val _ = offset := (!offset + 4)*)
+	    val spRestore = T.MOVE(T.TEMP SP, T.MEM(T.BINOP(T.PLUS, T.TEMP FP, T.CONST(!offset+40))))
+	    (*val _ = offset := (!offset + 4)*)
+                   
+          
 	in
-            seq([args] @ saves @ [body] @ restores)
+            seq([(*T.LABEL (Symbol.symbol("\009.globl"^(Symbol.name label))),
+		 T.LABEL (Symbol.symbol("\009.ent "^(Symbol.name label))),
+		 T.LABEL (Symbol.symbol("\009.text")),*)
+		   T.LABEL label]@[fpSave,fpUpdate,spSave,spUpdate] @[args]@ saves @ [body] @ restores@[fpRestore,spRestore]@[T.JUMP(T.TEMP RA, [])](*@[T.LABEL (Symbol.symbol("\009.end "^(Symbol.name label)))]*))
 	end 
 
     fun gettemp (temp,register) = temp
@@ -171,17 +198,39 @@ struct
     fun procEntryExit2 (frame,body)=
 	body @ [Assem.OPER{assem = "", src = specialregs@calleesaves, dst=[], jump=SOME[]}]
 
-    fun procEntryExit3 ({name = name, locals = locals, formals = formals, offset = offset,moveArg = moveArg}, body) =
-      let val offset = (!locals + (List.length argregs)) * wordSize
+    fun procEntryExit3 ({name = name, locals = locals, formals = formals, offset = offset,moveArg=moveArg}, body) =
+      let (*val offset = (!locals + (List.length argregs)) * wordSize*)
       in
-	{prolog = Symbol.name name ^ ":\n" ^
-                 "\tsw\t$fp\t0($sp)\n" ^
-                 "\tmove\t$fp\t$sp\n" ^
-                 "\taddiu\t$sp\t$sp\t-" ^ Int.toString(offset) ^ "\n",
+	{prolog = "",
 	 body = body,
-	 epilog = "\tmove\t$sp\t$fp\n" ^
-                  "\tlw\t$fp\t0($sp)\n" ^
-                  "\tjr\t$ra\n\n"
+	 epilog = ""
          }
       end
+
+  (*fun string (lab, str) = 
+    let
+      val l = String.size str
+      fun countSlash(oneChar::rest, currCount) = 
+        (case oneChar of 
+          #"\\" => (case rest of
+                    nextChar::rest2 => countSlash(rest2, currCount+1)
+                    | _ => ErrorMsg.impossible "Escape string error: unclosed string because ending with \\ char!")
+          | _ => countSlash(rest, currCount))
+        | countSlash([], currCount) = currCount
+      val numOfSlash = countSlash ((explode str), 0)
+    in
+      Symbol.name lab ^ ":\n\t.word " ^ (Int.toString (l-numOfSlash)) ^ "\n\t.ascii \"" ^ str ^ "\"\n"
+    end*)
+  fun string (lab,s) =
+	let
+	    val s = String.translate (fn c=> case c of
+						 #"\n"=> "\092n"
+					       | _ => (Char.toString c)) s
+	    val len = String.size(s)
+	in
+	    ".data\n.align 4\n"
+	    ^ Symbol.name lab ^ ":\n"
+	    ^ "\009.word " ^ Int.toString(len)^"\n"
+	    ^ "\009.asciiz \034"^s^"\034\n"
+	end
 end

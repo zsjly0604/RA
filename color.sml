@@ -205,7 +205,6 @@ fun color {interference = Liveness.IGRAPH{graph = graph, moves = moves}, initial
        in
           simplifyWorklist := nl;
           selectStack := Stack.push(!selectStack, n);
-          print ("simplify " ^ (Temp.makestring n) ^ "\n");
           app decrementDegree adjn
        end
 
@@ -215,7 +214,7 @@ fun color {interference = Liveness.IGRAPH{graph = graph, moves = moves}, initial
           val y = getAlias(#to m)
           val (u, v) = case NS.member(!precolored, y) of
                          true => (y, x)
-                       | false => (x, y)
+			| false => (x, y)
           fun allOK (u, nodes) = not(List.exists(fn t => not(OK(t, u))) nodes)
        in
          worklistMoves := MS.delete(!worklistMoves, m);
@@ -278,21 +277,17 @@ fun color {interference = Liveness.IGRAPH{graph = graph, moves = moves}, initial
   end
       
     fun repeat () =
-        if !simplifyWorklist <> [] then (print "begin simplify\n";simplify(!simplifyWorklist);repeat())
-        else if MS.isEmpty(!worklistMoves) = false then (print "begin coalesce\n";coalesce();repeat())
-             else if !freezeWorklist <> [] then (print "begin freeze\n";freeze();repeat()) 
-                  else if !spillWorklist <> [] then (print "begin spill\n";selectSpill();repeat())
+        if !simplifyWorklist <> [] then (simplify(!simplifyWorklist);repeat())
+        else if MS.isEmpty(!worklistMoves) = false then (coalesce();repeat())
+             else if !freezeWorklist <> [] then (freeze();repeat()) 
+                  else if !spillWorklist <> [] then (selectSpill();repeat())
                        else () 
   
   in
      build();
-     print "finish build\n";
      (if NS.isEmpty(!initial) = false then makeWorklist() else ());
-     print "finish make worklist\n";
      repeat();
-     print "finish repeat\n";
      assignColors();
-     print "finish assigncolors\n";
      (!colored, !spilledNodes)
   end
 end

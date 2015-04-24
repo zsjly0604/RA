@@ -18,5 +18,6 @@ sig
   val empty : 'a table
   val enter : 'a table * temp * 'a -> 'a table
   val look  : 'a table * temp -> 'a option
+  val resetTempCount : unit -> unit
 end
 

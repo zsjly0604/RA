@@ -35,4 +35,5 @@ sig type frame
     val gettemp : Temp.temp * register -> Temp.temp
     val lookreg : Temp.temp -> register
     val tempname : Temp.temp -> string
+    val string : Temp.label * string -> string
 end

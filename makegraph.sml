@@ -140,8 +140,8 @@ structure MakeGraph: MAKEGRAPH =
 	    val nodes = map (fn l => (G.getNode(fg, l))) (!llist)
 	    (*val _ = print "after getting nodes"*)
 	in
-	    G.printGraph (fn (nid,(assem:string,def:Temp.temp list,use:Temp.temp list,isMove:bool)) => ("nid:"^Temp.makestring(nid)^"assem:"^assem)) fg;
-	    print"after print";
+	    (*G.printGraph (fn (nid,(assem:string,def:Temp.temp list,use:Temp.temp list,isMove:bool)) => ("nid:"^Temp.makestring(nid)^"assem:"^assem)) fg;
+	    print"after print";*)
 	    (fg,nodes,!llist)
 	end
     end

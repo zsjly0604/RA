@@ -409,7 +409,7 @@ structure Semant :> SEMANT = struct
 			   (Symbol.enter (venv, name, Env.VarEntry {access = Tr.allocLocal (#level funcentry) (!escape), ty = ty}), []))
 		      end							    
 										    
-		  val (venv'',_) = foldr enterparam (venv', List.drop(Tr.formals (#level funcentry),0)) params 
+		  val (venv'',_) = foldr enterparam (venv', List.drop(Tr.formals (#level funcentry),1)) params 
 		  val {exp=bodyexp , ty=bodytype} = transExp(venv'',tenv, (#level funcentry), endlabel) body
 		  val result = Tr.procEntryExit({level = (#level funcentry), body = bodyexp})
 	      in
@@ -434,6 +434,7 @@ structure Semant :> SEMANT = struct
 		val result = transExp (Env.base_venv, Env.base_tenv, Tr.mainLevel, mainLabel) absyn; 
 	    in
                 Tr.procEntryExit({level = mainLevel, body = #exp result});
+		(*Temp.resetTempCount();*)
 		Tr.getResult()
 	    end
 end
