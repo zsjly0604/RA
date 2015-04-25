@@ -96,11 +96,12 @@ struct
       in
         if dref = uref then T.TEMP(F.FP)
         else
-          let val locals = #locals uframe
+          let val offset =(!(#numVar uframe))*(~4)
           in
-            T.MEM(T.BINOP(T.PLUS, T.CONST (!locals), followSL(nestLevel(defLevel), uparent)))  
+            T.MEM(T.BINOP(T.PLUS, T.CONST (offset), followSL(nestLevel(defLevel), uparent)))  
           end
-       end
+      end
+      
 
   fun reset () = frags := nil 
   fun getResult () = !frags
@@ -262,7 +263,23 @@ struct
           true => Nx(T.EXP(T.CALL(T.NAME funcLabel, staticLink@Exargs)))
 	| false =>Ex(T.CALL(T.NAME funcLabel, staticLink@Exargs)) 
      end
-                                  
+   (*fun callExp(levelUsed, OUTERMOST, lab, args, result) =
+    if result=Types.UNIT then Nx (T.EXP(MipsFrame.externalCall(Symbol.name(lab), args)))
+    else Ex (MipsFrame.externalCall(Symbol.name(lab), args))
+  | callExp(levelUsed, LEVEL{parent=levelDeclared, frame, eq}, lab, args, result) =
+	let
+	    val fp = Tree.TEMP(Frame.fp)
+	    val LEVEL{parent, frame, eq = eq1} = levelDeclared
+	    fun helper (sl, LEVEL{parent,frame, eq = eq2}) =  if eq1 = eq2 then sl
+							      else helper(T.MEM(sl), parent)
+	    val sl = helper(fp, levelUsed)
+	in
+	    if result = Types.UNIT then 
+		Nx (T.EXP(T.CALL(T.NAME lab, sl::args)))
+	    else
+		Ex (T.CALL(T.NAME lab, sl::args))
+	end
+      *)                            
    fun recordExp (fields) = 
      let val r = Temp.newtemp()
          val size = List.length(fields)

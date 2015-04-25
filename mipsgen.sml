@@ -77,13 +77,9 @@ fun codegen (stm:T.stm) : A.instr list =
 	| munchStm (T.EXP(T.CALL(T.NAME(lab), args))) = 
             let val pairs = map (fn r => (Temp.newtemp(), r)) Frame.callersaves
                 val srcs = map #1 pairs
-                fun fetch (a, r) = T.MOVE(T.TEMP r, T.TEMP a)
-                fun store (a, r) = T.MOVE(T.TEMP a, T.TEMP r)
             in
-               map (fn (a, r) => munchStm(store(a, r))) pairs;
               emit(A.OPER{assem = "jal " ^ Symbol.name(lab) ^ "\n",
                           src = munchArgs(0, args), dst = calldefs, jump = NONE});
-               map (fn (a, r) => munchStm(fetch(a, r))) (List.rev pairs);
               ()
             end 
 	| munchStm (T.EXP e) = (munchExp e;())
@@ -146,10 +142,8 @@ fun codegen (stm:T.stm) : A.instr list =
                 fun fetch (a, r) = T.MOVE(T.TEMP r, T.TEMP a)
                 fun store (a, r) = T.MOVE(T.TEMP a, T.TEMP r)
             in
-               map (fn (a, r) => munchStm(store(a, r))) pairs;
                result(fn r => emit(A.OPER{assem = "jal " ^ Symbol.name(lab) ^ "\n",
                           src = munchArgs(0, args), dst = calldefs, jump = NONE}));
-               map (fn (a, r) => munchStm(fetch(a, r))) (List.rev pairs);
               Frame.RV
             end 
 	| munchExp _  = ErrorMsg.impossible "Invalid exp"

@@ -4,7 +4,13 @@ struct
 
   datatype access =  InFrame of int
                    | InReg of Temp.temp
-  type frame = {name: Temp.label, formals: access list, locals: int ref, offset:int ref, moveArg: T.stm}
+  (*type frame = {name: Temp.label, formals: access list, locals: int ref, offset:int ref, moveArg: T.stm}*)
+  type frame = {label: Temp.label,
+	        formals: access list,
+		viewShiftInstns: T.stm,
+		numVar: int ref,
+		locals: int ref}
+		   
   val wordSize = 4
 
   datatype frag = PROC of {body:Tree.stm, frame:frame}
@@ -114,11 +120,11 @@ struct
 	| SOME(Reg r) => r
   
   val registers = map lookreg (argregs @ calleesaves @ callersaves @ [RV, RA])				   
-  fun name (f:frame) = #name f
+  fun name (f:frame) = #label f
   
   fun formals (f:frame) = #formals f
   
-  fun allocLocal ({name = name, formals = formals, offset = offset, locals = locals,moveArg=moveArg}) =
+  (*fun allocLocal ({name = name, formals = formals, offset = offset, locals = locals,moveArg=moveArg}) =
       let 	  
 	  fun allocLoc(escape) = if escape
 				 then (offset := (!offset - wordSize);
@@ -129,9 +135,19 @@ struct
 				 else InReg(Temp.newtemp())
       in
 	  allocLoc
-      end
+      end*)
+
+     fun allocLocal (frm:frame) true =
+	let
+	    val numVar = #numVar frm
+	in
+	    (*print "alloc local in frame";*)
+	    numVar:= !numVar + 1;
+	    InFrame(!numVar*(~4))
+	end
+      | allocLocal frm false = InReg(Temp.newtemp())
       
-  fun newFrame ({name:Temp.label, formals = formals}) =
+  (*fun newFrame ({name:Temp.label, formals = formals}) =
       let
 	  val _ = argoffset:= 0
 	  val offset = ref 0
@@ -156,13 +172,26 @@ struct
 	  val _= argoffset:=0
       in
 	  {name = name, formals = allocatedSL::(map allocFrame formals),offset = offset, locals = ref 0, moveArg = seq(!viewshiftInsns)}
-      end
+      end*)
+
+       fun newFrame ({name: Temp.label, formals: bool list}) =
+	let
+	    val count = ref ~1
+	    fun whereToGo true = (print "alloc formal in frame in newframe";count:=(!count)+1;InFrame(!count*(~4)))
+	      | whereToGo false = (print "alloc formal in register in newframe";InReg(Temp.newtemp()))
+	in
+	    {formals = map whereToGo formals,
+	     viewShiftInstns = T.MOVE(T.TEMP FP, T.TEMP SP),
+	     numVar = count,
+	     label = name,
+	     locals = ref 0}
+	end
 
     fun externalCall (funcname, args) =
        Tree.CALL(Tree.NAME(Temp.namedlabel funcname), args)
 
   
-    fun procEntryExit1 (frame:frame,body) =
+    (*fun procEntryExit1 (frame:frame,body) =
 	let
 	    val args = #moveArg frame
 	    val label = #name frame
@@ -190,15 +219,77 @@ struct
             seq([(*T.LABEL (Symbol.symbol("\009.globl"^(Symbol.name label))),
 		 T.LABEL (Symbol.symbol("\009.ent "^(Symbol.name label))),
 		 T.LABEL (Symbol.symbol("\009.text")),*)
-		   T.LABEL label]@[fpSave,fpUpdate,spSave,spUpdate] @[args]@ saves @ [body] @ restores@[fpRestore,spRestore]@[T.JUMP(T.TEMP RA, [])](*@[T.LABEL (Symbol.symbol("\009.end "^(Symbol.name label)))]*))
-	end 
+		   T.LABEL label]@[fpSave,fpUpdate,spSave,spUpdate] @[args]@ saves @ [body] @[fpRestore,spRestore]@restores@[T.JUMP(T.TEMP RA, [])](*@[T.LABEL (Symbol.symbol("\009.end "^(Symbol.name label)))]*))
+	end*)
+
+    fun genSEQ [] = T.EXP(T.CONST 0)
+      | genSEQ (first::nil) = first
+      | genSEQ [first,second] = T.SEQ(first, second)
+      | genSEQ (first::rest) = T.SEQ(first, genSEQ(rest))
+				    
+    fun procEntryExit1(frame:frame,body) =
+	let
+	    val {formals,viewShiftInstns,numVar,label,locals} = frame
+	    fun plusAndGet() = (numVar := !numVar + 1; !numVar)						 
+	    fun getAndMinus() = (numVar := !numVar - 1; !numVar+1)
+	    fun genSave (reg, seq) = T.MOVE(T.MEM(T.BINOP(T.PLUS, T.TEMP FP, T.CONST(plusAndGet()*(~4)))), T.TEMP reg)::seq
+	    val seqSave =
+		let
+		    val fpSave = T.MOVE(T.MEM(T.BINOP(T.PLUS, T.TEMP SP, T.CONST(plusAndGet()*(~4)))), T.TEMP FP)
+		    val spSave = T.MOVE(T.MEM(T.BINOP(T.PLUS, T.TEMP FP, T.CONST(plusAndGet()*(~4)))), T.TEMP SP)
+		    val fpUpdate = T.MOVE(T.TEMP FP, T.TEMP SP)
+		    val spUpdate = T.MOVE(T.TEMP SP, T.BINOP(T.PLUS, T.TEMP SP, T.CONST((!numVar+10)*(~4))))
+		in
+		    genSEQ([fpSave,
+			    fpUpdate,
+			    spSave,
+			    spUpdate]@
+			   (foldr genSave [] (RA::calleesaves)))
+		end
+	    fun genRestore (reg, seq) = T.MOVE(T.TEMP reg, T.MEM(T.BINOP(T.PLUS, T.TEMP FP, T.CONST(getAndMinus()*(~4)))))::seq
+	
+	    val seqRestore =
+		let
+(*		    val fpRestore = T.MOVE(T.TEMP fp, T.MEM(T.BINOP(T.PLUS, T.TEMP fp, T.CONST(getAndMinus()*(~4)))))
+		    val spRestore = T.MOVE(T.TEMP sp, T.MEM(T.BINOP(T.PLUS, T.TEMP fp, T.CONST(getAndMinus()*(~4)))))
+*)		in
+		    genSEQ(List.rev(foldl genRestore [] (RA::calleesaves@[SP, FP])))
+		end
+	    val cnt = ref ~1
+	    fun genMove (loc, seq) = case loc of
+					 InReg(t) => (cnt := !cnt+1; T.MOVE(T.TEMP t, T.TEMP(List.nth(argregs,!cnt)))::seq)
+				       | InFrame(k) => (cnt := !cnt+1; T.MOVE(T.MEM(T.BINOP(T.PLUS, T.TEMP FP, T.CONST k)), T.TEMP(List.nth(argregs,!cnt)))::seq)
+	    val seqMove = genSEQ(foldl genMove [] formals)
+	    
+	in
+	    case body of T.EXP(e) => genSEQ([(*T.LABEL (Symbol.symbol("\009.globl "^(Symbol.name label))),
+					     T.LABEL (Symbol.symbol("\009.ent "^(Symbol.name label))),
+					     T.LABEL (Symbol.symbol("\009.text")),*)
+					     T.LABEL label,
+					     seqSave,
+					     seqMove,
+					     T.MOVE(T.TEMP RV, e),
+					     seqRestore,
+					     T.JUMP(T.TEMP RA, [])(*,
+					     T.LABEL ((*Symbol.symbol("\009.end "^*)(Symbol.name label))*)])
+		       | _ => genSEQ([(*T.LABEL (Symbol.symbol("\009.globl "^(Symbol.name label))),
+				      T.LABEL (Symbol.symbol("\009.ent "^(Symbol.name label))),
+				      T.LABEL (Symbol.symbol("\009.text")),*)
+				      T.LABEL label,
+				      seqSave,
+				      seqMove,
+				      body,
+				      seqRestore,
+				      T.JUMP(T.TEMP RA, [])(*,
+				      T.LABEL ((*Symbol.symbol("\009.end "^*)(Symbol.name label))*)])
+	end
 
     fun gettemp (temp,register) = temp
 
     fun procEntryExit2 (frame,body)=
 	body @ [Assem.OPER{assem = "", src = specialregs@calleesaves, dst=[], jump=SOME[]}]
 
-    fun procEntryExit3 ({name = name, locals = locals, formals = formals, offset = offset,moveArg=moveArg}, body) =
+    fun procEntryExit3 (frame, body) =
       let (*val offset = (!locals + (List.length argregs)) * wordSize*)
       in
 	{prolog = "",

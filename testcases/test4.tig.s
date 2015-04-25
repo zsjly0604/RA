@@ -824,76 +824,75 @@ exit:
 	syscall
 	
 tig_main:
-	sw $fp, -8($sp)
+	sw $fp, -4($sp)
 	move $fp, $sp
-	sw $sp, -12($fp)
-	addi $sp, $sp, -52
-	sw $s0, 0($fp)
-	sw $a1, -4($fp)
-	sw $ra, -16($fp)
-	sw $s0, -20($fp)
-	sw $s1, -24($fp)
-	sw $s2, -28($fp)
-	sw $s3, -32($fp)
-	sw $s4, -36($fp)
-	sw $s5, -40($fp)
-	sw $s6, -44($fp)
-	sw $s7, -48($fp)
-	lw $s0, 0($fp)
+	sw $sp, -8($fp)
+	addi $sp, $sp, -48
+	sw $ra, -44($fp)
+	sw $s0, -40($fp)
+	sw $s1, -36($fp)
+	sw $s2, -32($fp)
+	sw $s3, -28($fp)
+	sw $s4, -24($fp)
+	sw $s5, -20($fp)
+	sw $s6, -16($fp)
+	sw $s7, -12($fp)
+	sw $a0, 0($fp)
+	lw $a0, 0($fp)
 	li $a1, 10
-	jal L2
-	lw $s7, -48($fp)
-	lw $s6, -44($fp)
-	lw $s5, -40($fp)
-	lw $s4, -36($fp)
-	lw $s3, -32($fp)
-	lw $s2, -28($fp)
-	lw $s1, -24($fp)
-	lw $s0, -20($fp)
-	lw $ra, -16($fp)
-	lw $fp, -12($fp)
+	jal L9
+	lw $ra, -44($fp)
+	lw $s0, -40($fp)
+	lw $s1, -36($fp)
+	lw $s2, -32($fp)
+	lw $s3, -28($fp)
+	lw $s4, -24($fp)
+	lw $s5, -20($fp)
+	lw $s6, -16($fp)
+	lw $s7, -12($fp)
 	lw $sp, -8($fp)
+	lw $fp, -4($fp)
 	jr $ra
-L6:
-	L2:
+L13:
+	L9:
 	sw $fp, -8($sp)
 	move $fp, $sp
 	sw $sp, -12($fp)
 	addi $sp, $sp, -52
-	sw $s5, 0($fp)
-	sw $s6, -4($fp)
-	sw $ra, -16($fp)
-	sw $s0, -20($fp)
-	sw $s1, -24($fp)
-	sw $s2, -28($fp)
+	sw $ra, -48($fp)
+	sw $s0, -44($fp)
+	sw $s1, -40($fp)
+	sw $s2, -36($fp)
 	sw $s3, -32($fp)
-	sw $s4, -36($fp)
-	sw $s5, -40($fp)
-	sw $s6, -44($fp)
-	sw $s7, -48($fp)
+	sw $s4, -28($fp)
+	sw $s5, -24($fp)
+	sw $s6, -20($fp)
+	sw $s7, -16($fp)
+	sw $a1, -4($fp)
+	sw $a0, 0($fp)
 	li $v0, 1
-	lw $a2, -4($fp)
-	beqz $a2, L3
-b L4
-L4:
 	lw $a3, -4($fp)
-	move $s5, $fp
-	lw $s7, -4($fp)
-	addi $s6, $s7, -1
-	jal L2
-	mul $v0, $a3, $v0
-L3:
-	lw $s7, -48($fp)
-	lw $s6, -44($fp)
-	lw $s5, -40($fp)
-	lw $s4, -36($fp)
+	beqz $a3, L10
+b L11
+L11:
+	lw $a2, -4($fp)
+	move $a0, $fp
+	lw $t0, -4($fp)
+	addi $a1, $t0, -1
+	jal L9
+	mul $v0, $a2, $v0
+L10:
+	lw $ra, -48($fp)
+	lw $s0, -44($fp)
+	lw $s1, -40($fp)
+	lw $s2, -36($fp)
 	lw $s3, -32($fp)
-	lw $s2, -28($fp)
-	lw $s1, -24($fp)
-	lw $s0, -20($fp)
-	lw $ra, -16($fp)
-	lw $fp, -12($fp)
-	lw $sp, -8($fp)
+	lw $s4, -28($fp)
+	lw $s5, -24($fp)
+	lw $s6, -20($fp)
+	lw $s7, -16($fp)
+	lw $sp, -12($fp)
+	lw $fp, -8($fp)
 	jr $ra
-L7:
+L14:
 	

@@ -27,11 +27,11 @@ struct
     | A.IntExp n => ()
     | A.StringExp str => ()
     | A.VarExp var => traverseVar(env, d, var)
-    | A.CallExp{func, args, pos} => foldl (fn (exp, _) => traverseExp(env, d, exp)) () args
+    | A.CallExp{func, args, pos} => app (fn x => traverseExp(env, d, x)) args
     | A.OpExp{left, oper, right, pos} => (traverseExp(env, d, left);
                                             traverseExp(env, d, right))
-    | A.RecordExp{fields, typ, pos} => foldl (fn ((_, exp, _), _) => traverseExp(env, d, exp)) () fields  
-    | A.SeqExp expposList => foldl (fn((exp, _), _) => traverseExp(env, d, exp)) () expposList
+    | A.RecordExp{fields, typ, pos} => app (fn (s, exp, pos) => traverseExp(env, d, exp)) fields  
+    | A.SeqExp expposList => app (fn (exp, pos) => traverseExp(env, d, exp)) expposList
     | A.AssignExp{var, exp, pos}=> (traverseVar(env, d, var);
                                       traverseExp(env, d, exp))  
     | A.IfExp{test, then', else', pos} => (traverseExp(env, d, test);
@@ -43,9 +43,8 @@ struct
                                       traverseExp(env, d, body))
     | A.ForExp{var, escape, lo, hi, body, pos} => let val new_env = Symbol.enter(env, var, (d, escape)) 
                                                   in
-                                                    escape := false;
-                                                    traverseExp(env, d, lo);
-                                                    traverseExp(env, d, hi);
+                                                    traverseExp(new_env, d, lo);
+                                                    traverseExp(new_env, d, hi);
                                                     traverseExp(new_env, d, body)
                                                   end
     | A.BreakExp pos => ()
@@ -62,15 +61,13 @@ struct
   and traverseDecs(env, d, s:Absyn.dec list) : escEnv = 
     let fun parse_dec (dec, env) =
       case dec of
-        A.FunctionDec fundecs => foldl (fn ({name, params, body, pos, result}, env) => let val new_env = (foldl (fn ({name, escape, ...}, env) => (escape := false;
-                 Symbol.enter(env, name, (d + 1, escape)))) env params)
+        A.FunctionDec fundecs => foldl (fn ({name, params, body, pos, result}, env) => let val new_env = (foldl (fn ({name, escape, ...}, env) => (Symbol.enter(env, name, (d + 1, escape)))) env params)
             in
                traverseExp(new_env, d + 1, body);
                env
             end) env fundecs
-      | A.VarDec{name, escape, init, ...} => (escape := false;
-                                             traverseExp(env, d, init);
-                                             Symbol.enter(env, name, (d, escape)))
+      | A.VarDec{name, escape, init, ...} => (traverseExp(env, d, init);
+                                              Symbol.enter(env, name, (d, escape)))
       | A.TypeDec(_) => env
       | _ => Impossible "Invalid decalaration type" 
     in
